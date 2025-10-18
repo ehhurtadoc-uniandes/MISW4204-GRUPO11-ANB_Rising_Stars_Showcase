@@ -134,7 +134,7 @@ jobs:
         pytest --cov=app --cov-report=xml
     
     - name: SonarQube Scan
-      uses: sonarqube-quality-gate-action@master
+      uses: sonarqube-quality-gate-action@v1.3.0
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
