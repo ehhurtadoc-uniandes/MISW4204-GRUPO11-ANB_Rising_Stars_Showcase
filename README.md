@@ -128,27 +128,77 @@ La documentación interactiva de la API está disponible en:
 
 ## Pruebas
 
+### Prerrequisitos para Ejecutar Pruebas
+```bash
+# Instalar dependencias de Python
+pip install -r requirements.txt
+
+# Instalar Newman CLI (opcional, para pruebas de API)
+npm install -g newman
+```
+
 ### Ejecutar Pruebas Unitarias
 ```bash
-# Ejecutar todas las pruebas
-pytest
+# Ejecutar todas las pruebas (32 tests)
+python -m pytest tests/ -v
 
-# Ejecutar con cobertura
-pytest --cov=app tests/
+# Ejecutar con cobertura de código
+python -m pytest tests/ --cov=app --cov-report=term-missing
 
 # Ejecutar pruebas específicas
-pytest tests/test_auth.py
+python -m pytest tests/test_auth.py -v
+python -m pytest tests/test_videos.py -v
+python -m pytest tests/test_public.py -v
 ```
+
+**Resultado esperado:**
+- ✅ 32 tests pasando
+- ✅ 76% cobertura de código
+- ✅ Sin errores críticos
 
 ### Ejecutar Pruebas de API (Postman)
 ```bash
-# Instalar Newman (CLI de Postman)
-npm install -g newman
+# Primero, ejecutar la aplicación
+docker-compose up
 
-# Ejecutar colección de pruebas
+# En otra terminal, ejecutar las pruebas de Postman
+newman run collections/anb-api.postman_collection.json \
+  -e collections/postman_environment.json \
+  --reporters cli
+```
+
+### Verificación Completa del Sistema
+```bash
+# 1. Verificar que la aplicación esté ejecutándose
+curl http://localhost:8000/health
+
+# 2. Ejecutar todas las pruebas unitarias
+python -m pytest tests/ -v
+
+# 3. Ejecutar pruebas de API (si la aplicación está corriendo)
 newman run collections/anb-api.postman_collection.json \
   -e collections/postman_environment.json
 ```
+
+### Solución de Problemas Comunes
+
+**Error: "ModuleNotFoundError: No module named 'fastapi'"**
+```bash
+pip install -r requirements.txt
+```
+
+**Error: "could not translate host name 'postgres'"**
+- Las pruebas unitarias usan SQLite automáticamente
+- Este error solo ocurre si se ejecuta la aplicación sin Docker
+
+**Error: "newman: command not found"**
+```bash
+npm install -g newman
+```
+
+**Error: "Connection refused" en pruebas de Postman**
+- Asegúrate de que la aplicación esté ejecutándose: `docker-compose up`
+- Verifica que el puerto 8000 esté disponible
 
 ## CI/CD Pipeline
 

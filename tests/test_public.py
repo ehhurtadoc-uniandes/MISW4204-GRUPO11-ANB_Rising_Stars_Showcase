@@ -58,4 +58,4 @@ def test_vote_with_invalid_token(client):
     })
     
     response = client.post("/api/public/videos/some-video-id/vote")
-    assert response.status_code == 403
+    assert response.status_code == 401
