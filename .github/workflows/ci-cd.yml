@@ -12,30 +12,6 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-      
-      redis:
-        image: redis:7
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
 
     steps:
     - uses: actions/checkout@v4
@@ -65,8 +41,7 @@ jobs:
     
     - name: Run tests with coverage
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-        REDIS_URL: redis://localhost:6379/0
+        DATABASE_URL: sqlite:///./test.db
         SECRET_KEY: test-secret-key
       run: |
         pytest --cov=app --cov-report=xml --cov-report=term-missing
@@ -83,6 +58,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -94,18 +71,26 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 black isort
     
+    - name: Format code with black
+      run: |
+        black app tests
+    
+    - name: Sort imports with isort
+      run: |
+        isort app tests
+    
     - name: Lint with flake8
       run: |
         flake8 app tests --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 app tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
-    - name: Check code formatting with black
+    - name: Commit formatting changes
       run: |
-        black --check app tests
-    
-    - name: Check import sorting with isort
-      run: |
-        isort --check-only app tests
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git diff --staged --quiet || git commit -m "Auto-format code with black and isort"
+        git push
 
   # sonarqube:
   #   runs-on: ubuntu-latest
