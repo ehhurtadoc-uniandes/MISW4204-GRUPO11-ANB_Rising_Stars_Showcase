@@ -14,7 +14,8 @@ from app.schemas.video import (
 from app.schemas.user import UserResponse
 from app.models.video import VideoStatus
 from app.core.config import settings
-from app.workers.video_processor import process_video_task
+from app.workers.celery_app import celery_app
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -66,7 +67,11 @@ async def upload_video(
     )
     
     # Enqueue processing task
-    task = process_video_task.delay(str(video.id), file_path)
+    task = celery_app.send_task(
+        'app.workers.video_processor.process_video_task',
+        args=[str(video.id), file_path],
+        queue='video_queue'
+    )
     
     # Update video with task ID
     video.task_id = task.id

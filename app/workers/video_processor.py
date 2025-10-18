@@ -12,6 +12,10 @@ from app.models.video import VideoStatus
 from app.core.config import settings
 import logging
 
+# Fix for PIL.Image.ANTIALIAS compatibility
+if not hasattr(Image, 'ANTIALIAS'):
+    Image.ANTIALIAS = Image.LANCZOS
+
 logger = logging.getLogger(__name__)
 
 

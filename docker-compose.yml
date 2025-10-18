@@ -81,7 +81,7 @@ services:
     command: >
       sh -c "
         sleep 15 &&
-        celery -A app.workers.celery_app worker --loglevel=info --concurrency=2
+        celery -A app.workers.celery_app worker --loglevel=info --concurrency=2 --queues=video_queue
       "
 
   # Celery Flower (Optional - for monitoring)
