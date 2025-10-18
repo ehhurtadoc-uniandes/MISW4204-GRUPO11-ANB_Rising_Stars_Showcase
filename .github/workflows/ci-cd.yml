@@ -43,7 +43,10 @@ jobs:
       env:
         DATABASE_URL: sqlite:///./test.db
         SECRET_KEY: test-secret-key
+        UPLOAD_DIR: ./test_uploads
+        PROCESSED_DIR: ./test_processed
       run: |
+        mkdir -p test_uploads test_processed
         pytest --cov=app --cov-report=xml --cov-report=term-missing
     
     - name: Upload coverage to Codecov
@@ -71,26 +74,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 black isort
     
-    - name: Format code with black
+    - name: Check code formatting with black
       run: |
-        black app tests
+        black --check app tests
     
-    - name: Sort imports with isort
+    - name: Check import sorting with isort
       run: |
-        isort app tests
+        isort --check-only app tests
     
     - name: Lint with flake8
       run: |
         flake8 app tests --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 app tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    
-    - name: Commit formatting changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .
-        git diff --staged --quiet || git commit -m "Auto-format code with black and isort"
-        git push
 
   # sonarqube:
   #   runs-on: ubuntu-latest
