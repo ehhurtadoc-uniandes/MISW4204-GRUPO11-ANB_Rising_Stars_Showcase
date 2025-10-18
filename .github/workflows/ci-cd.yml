@@ -188,7 +188,7 @@ jobs:
         bandit -r app/ -f json -o bandit-report.json || true
     
     - name: Upload Bandit results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: bandit-results
         path: bandit-report.json
