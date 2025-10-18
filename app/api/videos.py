@@ -113,12 +113,20 @@ def get_video_detail(
     db: Session = Depends(get_db)
 ):
     """Get details of a specific video"""
-    video = VideoService.get_video_by_id(db, video_id, current_user.id)
-    
-    if not video:
+    # First check if video exists (without user filter)
+    video_exists = VideoService.get_video_by_id_any_user(db, video_id)
+    if not video_exists:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Video no encontrado"
+        )
+    
+    # Then check if user owns the video
+    video = VideoService.get_video_by_id(db, video_id, current_user.id)
+    if not video:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permisos para acceder a este video"
         )
     
     # Get vote count
@@ -143,12 +151,20 @@ def delete_video(
     db: Session = Depends(get_db)
 ):
     """Delete a video if conditions are met"""
-    video = VideoService.get_video_by_id(db, video_id, current_user.id)
-    
-    if not video:
+    # First check if video exists (without user filter)
+    video_exists = VideoService.get_video_by_id_any_user(db, video_id)
+    if not video_exists:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Video no encontrado"
+        )
+    
+    # Then check if user owns the video
+    video = VideoService.get_video_by_id(db, video_id, current_user.id)
+    if not video:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permisos para eliminar este video"
         )
     
     # Check if video can be deleted
