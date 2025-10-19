@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Text
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 import enum
+import uuid
 from app.core.database import Base
 
 
@@ -15,7 +17,7 @@ class VideoStatus(enum.Enum):
 class Video(Base):
     __tablename__ = "videos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
     title = Column(String, nullable=False)
     status = Column(Enum(VideoStatus), default=VideoStatus.uploaded)
     original_filename = Column(String, nullable=False)

@@ -237,7 +237,7 @@
 								{
 									"key": "video_file",
 									"type": "file",
-									"src": []
+									"src": "test_assets/test_video.mp4"
 								}
 							]
 						},

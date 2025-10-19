@@ -72,7 +72,7 @@ def vote_for_video(
     return VoteResponse(message="Voto registrado exitosamente.")
 
 
-@router.get("/rankings", response_model=List[RankingItem])
+@router.get("/ranking", response_model=List[RankingItem])
 def get_rankings(
     city: Optional[str] = Query(None, description="Filtrar por ciudad"),
     limit: int = Query(default=50, le=100),

@@ -40,6 +40,11 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=anb_user
+      - POSTGRES_PASSWORD=anb_password
+      - POSTGRES_DB=anb_db
     volumes:
       - ./uploads:/app/uploads
       - ./processed_videos:/app/processed_videos
@@ -52,12 +57,6 @@ services:
     networks:
       - anb_network
     restart: unless-stopped
-    command: >
-      sh -c "
-        sleep 10 &&
-        alembic upgrade head &&
-        uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
-      "
 
   # Celery Worker
   worker:
@@ -81,7 +80,7 @@ services:
     command: >
       sh -c "
         sleep 15 &&
-        celery -A app.workers.celery_app worker --loglevel=info --concurrency=2
+        celery -A app.workers.celery_app worker --loglevel=info --concurrency=2 --queues=video_queue
       "
 
   # Celery Flower (Optional - for monitoring)
