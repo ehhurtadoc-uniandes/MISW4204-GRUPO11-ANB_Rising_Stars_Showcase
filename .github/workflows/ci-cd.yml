@@ -47,7 +47,7 @@ jobs:
         PROCESSED_DIR: ./test_processed
       run: |
         mkdir -p test_uploads test_processed
-        pytest --cov=app --cov-report=xml --cov-report=term-missing
+        pytest --cov=app --cov-report=xml --cov-report=term-missing --ignore=capacity-planning
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
