@@ -1,0 +1,46 @@
+[
+  {
+    "endpoint": "health",
+    "status_code": 200,
+    "response_time": 0.008049964904785156,
+    "success": true,
+    "timestamp": "2025-10-19T14:01:38.756693",
+    "data": {
+      "status": "healthy",
+      "environment": "development"
+    }
+  },
+  {
+    "endpoint": "/api/public/videos",
+    "status_code": 500,
+    "response_time": 0.055992841720581055,
+    "success": false,
+    "timestamp": "2025-10-19T14:01:38.813688"
+  },
+  {
+    "endpoint": "/api/public/ranking",
+    "status_code": 404,
+    "response_time": 0.0025086402893066406,
+    "success": false,
+    "timestamp": "2025-10-19T14:01:38.816197"
+  },
+  {
+    "endpoint": "signup",
+    "status_code": 500,
+    "response_time": 0.012021064758300781,
+    "success": false,
+    "timestamp": "2025-10-19T14:01:38.828218"
+  },
+  {
+    "total_requests": 30,
+    "successful_requests": 30,
+    "success_rate": 100.0,
+    "avg_response_time": 0.002770352363586426,
+    "p95_response_time": 0.003248929977416992,
+    "p99_response_time": 0.0035102367401123047,
+    "max_response_time": 0.0035102367401123047,
+    "min_response_time": 0.0019981861114501953,
+    "error_rate": 0.0,
+    "meets_slo": true
+  }
+]

@@ -18,9 +18,9 @@ def test_get_my_videos_unauthorized(client):
     assert response.status_code == 403
 
 
-@patch('app.workers.video_processor.process_video_task.delay')
+@patch('app.api.videos.celery_app.send_task')
 @patch('app.services.file_storage.get_file_storage')
-def test_upload_video_success(mock_storage, mock_task, authenticated_client):
+def test_upload_video_success(mock_storage, mock_celery, authenticated_client):
     """Test successful video upload"""
     client, token_data = authenticated_client
     
@@ -30,7 +30,7 @@ def test_upload_video_success(mock_storage, mock_task, authenticated_client):
     mock_storage.return_value = mock_storage_instance
     
     # Mock Celery task
-    mock_task.return_value.id = "test-task-id"
+    mock_celery.return_value.id = "test-task-id"
     
     # Create fake video file
     video_content = b"fake video content"
@@ -125,4 +125,4 @@ def test_get_videos_with_invalid_token(client):
     })
     
     response = client.get("/api/videos")
-    assert response.status_code == 403
+    assert response.status_code == 401

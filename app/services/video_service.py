@@ -39,6 +39,11 @@ class VideoService:
         if user_id:
             query = query.filter(Video.owner_id == user_id)
         return query.first()
+    
+    @staticmethod
+    def get_video_by_id_any_user(db: Session, video_id: str) -> Video:
+        """Get video by ID without user filter (for permission checks)"""
+        return db.query(Video).filter(Video.id == video_id).first()
 
     @staticmethod
     def delete_video(db: Session, video_id: str, user_id: int) -> bool:

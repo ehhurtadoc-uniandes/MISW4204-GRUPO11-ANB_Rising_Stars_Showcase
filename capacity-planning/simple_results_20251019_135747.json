@@ -1,0 +1,14 @@
+[
+  {
+    "total_requests": 281,
+    "successful_requests": 281,
+    "success_rate": 100.0,
+    "avg_response_time": 0.0032873832458278885,
+    "p95_response_time": 0.004508018493652344,
+    "p99_response_time": 0.009589195251464844,
+    "max_response_time": 0.010510444641113281,
+    "min_response_time": 0.001556396484375,
+    "error_rate": 0.0,
+    "meets_slo": true
+  }
+]

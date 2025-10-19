@@ -33,8 +33,14 @@ COPY ./app /app/app
 COPY alembic.ini /app/
 COPY ./alembic /app/alembic
 
+# Copy initialization scripts
+COPY ./scripts /app/scripts
+
 # Create necessary directories
 RUN mkdir -p /app/uploads /app/processed_videos /app/assets /app/logs
+
+# Make scripts executable
+RUN chmod +x /app/scripts/*.sh
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash anb
@@ -44,5 +50,5 @@ USER anb
 # Expose port
 EXPOSE 8000
 
-# Default command
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Default command - usar script de inicio
+CMD ["/app/scripts/start.sh"]
