@@ -3,9 +3,10 @@
 ## Información del Equipo
 
 **Grupo 11 - Team ANB**
-- Integrante 1 - [correo1@uniandes.edu.co] - [Rol en el proyecto]
-- Integrante 2 - [correo2@uniandes.edu.co] - [Rol en el proyecto]
-- Integrante 3 - [correo3@uniandes.edu.co] - [Rol en el proyecto]
+- Sergio Fernando Barrera Molano - [sf.barreram1@uniandes.edu.co] - [Rol en el proyecto]
+- Harold Andrés Bartolo Moscoso - [h.bartolo@uniandes.edu.co] - [Rol en el proyecto]
+- Edwin Hernán Hurtado Cruz - [eh.hurtado@uniandes.edu.co] - [Rol en el proyecto]
+- Juan José Restrepo Bonilla - [jj.restrepob1@uniandes.edu.co] - [Rol en el proyecto]
 
 *Por favor, actualice esta sección con la información real del equipo antes de la entrega.*
 
