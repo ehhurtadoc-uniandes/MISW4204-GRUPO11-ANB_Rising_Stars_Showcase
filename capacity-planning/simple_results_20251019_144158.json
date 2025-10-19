@@ -1,0 +1,71 @@
+[
+  {
+    "endpoint": "health",
+    "status_code": 200,
+    "response_time": 0.0560603141784668,
+    "success": true,
+    "timestamp": "2025-10-19T14:41:27.908575",
+    "data": {
+      "status": "healthy",
+      "environment": "development"
+    }
+  },
+  {
+    "endpoint": "/api/public/videos",
+    "status_code": 200,
+    "response_time": 0.10188794136047363,
+    "success": true,
+    "timestamp": "2025-10-19T14:41:28.010463",
+    "data": []
+  },
+  {
+    "endpoint": "/api/public/ranking",
+    "status_code": 200,
+    "response_time": 0.012494564056396484,
+    "success": true,
+    "timestamp": "2025-10-19T14:41:28.022958",
+    "data": []
+  },
+  {
+    "endpoint": "signup",
+    "status_code": 201,
+    "response_time": 0.18889474868774414,
+    "success": true,
+    "timestamp": "2025-10-19T14:41:28.211852",
+    "data": {
+      "email": "testuser1760902888@example.com",
+      "first_name": "Test",
+      "last_name": "User",
+      "city": "Bogot\u00e1",
+      "country": "Colombia",
+      "id": 1,
+      "is_active": true,
+      "created_at": "2025-10-19T19:43:15.573402",
+      "updated_at": null
+    }
+  },
+  {
+    "endpoint": "login",
+    "status_code": 200,
+    "response_time": 0.16099238395690918,
+    "success": true,
+    "timestamp": "2025-10-19T14:41:28.372845",
+    "data": {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjA5MDQ2ODgsInN1YiI6InRlc3R1c2VyMTc2MDkwMjg4OEBleGFtcGxlLmNvbSJ9.QW1T4kzF_lRHtyMMotq9emYN0D_kQy_kNKENmero2O0",
+      "token_type": "Bearer",
+      "expires_in": 1800
+    }
+  },
+  {
+    "total_requests": 30,
+    "successful_requests": 30,
+    "success_rate": 100.0,
+    "avg_response_time": 0.002980661392211914,
+    "p95_response_time": 0.003764629364013672,
+    "p99_response_time": 0.00400233268737793,
+    "max_response_time": 0.00400233268737793,
+    "min_response_time": 0.002001047134399414,
+    "error_rate": 0.0,
+    "meets_slo": true
+  }
+]

@@ -1,0 +1,6 @@
+# Dependencias para pruebas de capacidad
+aiohttp==3.9.1
+asyncio
+psutil==5.9.6
+redis==5.0.1
+pyyaml==6.0.1

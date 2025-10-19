@@ -27,7 +27,8 @@ def upgrade() -> None:
         sa.Column('country', sa.String(length=100), nullable=False),
         sa.Column('hashed_password', sa.String(length=255), nullable=False),
         sa.Column('is_active', sa.Boolean(), nullable=True),
-        sa.Column('created_at', sa.DateTime(), nullable=True),
+        sa.Column('created_at', sa.DateTime(), nullable=True, server_default=sa.text('CURRENT_TIMESTAMP')),
+        sa.Column('updated_at', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
@@ -41,8 +42,10 @@ def upgrade() -> None:
         sa.Column('original_path', sa.String(length=500), nullable=True),
         sa.Column('processed_path', sa.String(length=500), nullable=True),
         sa.Column('status', postgresql.ENUM('uploaded', 'processing', 'processed', 'failed', name='videostatus'), nullable=True),
+        sa.Column('task_id', sa.String(length=255), nullable=True),
         sa.Column('error_message', sa.Text(), nullable=True),
-        sa.Column('uploaded_at', sa.DateTime(), nullable=True),
+        sa.Column('created_at', sa.DateTime(), nullable=True, server_default=sa.text('CURRENT_TIMESTAMP')),
+        sa.Column('updated_at', sa.DateTime(), nullable=True),
         sa.Column('processed_at', sa.DateTime(), nullable=True),
         sa.Column('owner_id', sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ),

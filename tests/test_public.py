@@ -32,21 +32,21 @@ def test_vote_unauthorized(client):
 
 def test_get_rankings_empty(client):
     """Test getting rankings when no votes exist"""
-    response = client.get("/api/public/rankings")
+    response = client.get("/api/public/ranking")
     assert response.status_code == 200
     assert response.json() == []
 
 
 def test_get_rankings_with_city_filter(client):
     """Test getting rankings with city filter"""
-    response = client.get("/api/public/rankings?city=Bogotá")
+    response = client.get("/api/public/ranking?city=Bogotá")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_rankings_with_limit(client):
     """Test getting rankings with limit parameter"""
-    response = client.get("/api/public/rankings?limit=5")
+    response = client.get("/api/public/ranking?limit=5")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
