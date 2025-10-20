@@ -1,7 +1,7 @@
 # Documentación
 
 1. [Modelo de Datos](1.%20Modelo%20de%20Datos.md)
-2. [Documentación de la API](%20Documentacion%20API.md)
+2. [Documentación de la API](2.%20Documentacion%20API.md)
 
 
 ## Diagrama de componentes
