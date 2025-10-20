@@ -12,8 +12,6 @@
 
 **URL del video**: [[Insertar enlace al video aquí]](https://uniandes-my.sharepoint.com/:f:/g/personal/jj_restrepob1_uniandes_edu_co/EsHppIZO5LtMifUEuMR8__0B56yjdHhbJ3OvqG5OBZBQJw?e=HSPGGr)
 
-*Asegúrese de que el enlace sea accesible públicamente y funcione correctamente antes de la entrega.*
-
 ### Contenido del Video
 
 El video de sustentación debe incluir:
