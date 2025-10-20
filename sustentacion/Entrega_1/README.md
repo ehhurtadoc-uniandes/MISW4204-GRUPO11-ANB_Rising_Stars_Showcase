@@ -5,12 +5,12 @@
 ### Información de la Sustentación
 
 - **Duración máxima**: 20 minutos
-- **Fecha de grabación**: [Fecha de grabación]
-- **Integrantes participantes**: [Lista de integrantes que participan en el video]
+- **Fecha de grabación**: 19/10/2025
+- **Integrantes participantes**: Juan José Restrepo, Sergio Fernando Barrera, Harold Bartolo Moscoso, Edwin Hurtado
 
 ### Enlace al Video
 
-**URL del video**: [Insertar enlace al video aquí]
+**URL del video**: [[Insertar enlace al video aquí]](https://uniandes-my.sharepoint.com/:f:/g/personal/jj_restrepob1_uniandes_edu_co/EsHppIZO5LtMifUEuMR8__0B56yjdHhbJ3OvqG5OBZBQJw?e=HSPGGr)
 
 *Asegúrese de que el enlace sea accesible públicamente y funcione correctamente antes de la entrega.*
 
