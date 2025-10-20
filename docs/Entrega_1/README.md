@@ -1,9 +1,9 @@
 # Documentación
-## Modelo de Datos
-![Diagrama Entidad Relación (ERD)](https://github.com/user-attachments/assets/c9b639e8-0ad6-43e2-a4c5-57e401b152df)
 
-## Documentación de la API
-Elaboración y centralización de la documentación de los endpoints, así como la ejecución de pruebas correspondientes, mediante Postman.
+1. [Modelo de Datos](1.%20Modelo%20de%20Datos.md)
+2. [Documentación de la API](%20Documentacion%20API.md)
+
+
 ## Diagrama de componentes
 Representación de los principales elementos de la arquitectura, considerando backend, worker, broker y base de datos.
 ## Diagrama de flujo de procesos
