@@ -8,8 +8,6 @@
 - Edwin Hernán Hurtado Cruz - [eh.hurtado@uniandes.edu.co] - Desarrollador / Cloud Junior
 - Juan José Restrepo Bonilla - [jj.restrepob1@uniandes.edu.co] - Desarrollador / Cloud Junior
 
-*Por favor, actualice esta sección con la información real del equipo antes de la entrega.*
-
 ## Video de Sustentación
 
 El video de sustentación para la Entrega 1 estará disponible en: [sustentacion/Entrega_1/](sustentacion/Entrega_1/)
