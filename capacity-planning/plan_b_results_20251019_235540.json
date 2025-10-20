@@ -1,0 +1,1078 @@
+{
+  "analysis_type": "plan_b_complete",
+  "timestamp": "2025-10-19T16:59:31.677778",
+  "configurations": {
+    "video_sizes_mb": [
+      50,
+      100
+    ],
+    "worker_configs": [
+      1,
+      2,
+      4
+    ]
+  },
+  "results": {
+    "capacity_analysis": {
+      "analysis_type": "worker_capacity",
+      "timestamp": "2025-10-19T23:37:16.070832",
+      "results": [
+        {
+          "video_size_mb": 50,
+          "workers": 1,
+          "saturation": {
+            "test_type": "saturation",
+            "video_size_mb": 50,
+            "workers": 1,
+            "results": [
+              {
+                "batch_size": 1,
+                "video_size_mb": 50,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.50532746315,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 1,
+                "cpu_usage": 5.4,
+                "memory_usage": 63.1,
+                "saturated": false
+              },
+              {
+                "batch_size": 2,
+                "video_size_mb": 50,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5206723213196,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 2,
+                "cpu_usage": 1.7,
+                "memory_usage": 60.1,
+                "saturated": false
+              },
+              {
+                "batch_size": 5,
+                "video_size_mb": 50,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5207388401031,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 5,
+                "cpu_usage": 6.3,
+                "memory_usage": 59.1,
+                "saturated": false
+              },
+              {
+                "batch_size": 10,
+                "video_size_mb": 50,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5538487434387,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 10,
+                "cpu_usage": 2.3,
+                "memory_usage": 59.3,
+                "saturated": false
+              },
+              {
+                "batch_size": 20,
+                "video_size_mb": 50,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5471434593201,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 20,
+                "cpu_usage": 1.9,
+                "memory_usage": 59.4,
+                "saturated": false
+              },
+              {
+                "batch_size": 50,
+                "video_size_mb": 50,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5480887889862,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 50,
+                "cpu_usage": 4.8,
+                "memory_usage": 59.4,
+                "saturated": false
+              },
+              {
+                "batch_size": 100,
+                "video_size_mb": 50,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5445935726166,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 100,
+                "cpu_usage": 2.9,
+                "memory_usage": 58.4,
+                "saturated": false
+              }
+            ],
+            "max_sustainable_batch": 100,
+            "max_throughput": 0.0
+          },
+          "sustained": {
+            "test_type": "sustained",
+            "video_size_mb": 50,
+            "workers": 1,
+            "duration_minutes": 3,
+            "videos_processed": 5,
+            "errors": 0,
+            "throughput_videos_per_min": 1.6647823147478562,
+            "results": [
+              {
+                "timestamp": "2025-10-19T18:09:50.592812",
+                "elapsed_minutes": 0.0,
+                "queue_size": 0,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 2.2,
+                "memory_usage": 58.3
+              },
+              {
+                "timestamp": "2025-10-19T18:10:20.624312",
+                "elapsed_minutes": 0.5007150808970133,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 1.7,
+                "memory_usage": 58.4
+              },
+              {
+                "timestamp": "2025-10-19T18:10:50.655810",
+                "elapsed_minutes": 1.0012395103772482,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 1.6,
+                "memory_usage": 58.4
+              },
+              {
+                "timestamp": "2025-10-19T18:11:20.688470",
+                "elapsed_minutes": 1.5017865737279257,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 2.6,
+                "memory_usage": 58.4
+              },
+              {
+                "timestamp": "2025-10-19T18:11:50.719227",
+                "elapsed_minutes": 2.0022945483525594,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.9,
+                "memory_usage": 58.3
+              },
+              {
+                "timestamp": "2025-10-19T18:12:20.754300",
+                "elapsed_minutes": 2.5028772791226706,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.2,
+                "memory_usage": 58.3
+              }
+            ],
+            "stable": true
+          },
+          "capacity_videos_per_min": 1.6647823147478562,
+          "stable": true
+        },
+        {
+          "video_size_mb": 50,
+          "workers": 2,
+          "saturation": {
+            "test_type": "saturation",
+            "video_size_mb": 50,
+            "workers": 2,
+            "results": [
+              {
+                "batch_size": 1,
+                "video_size_mb": 50,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5501132011414,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 1,
+                "cpu_usage": 2.0,
+                "memory_usage": 57.4,
+                "saturated": false
+              },
+              {
+                "batch_size": 2,
+                "video_size_mb": 50,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.541823387146,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 2,
+                "cpu_usage": 2.0,
+                "memory_usage": 57.2,
+                "saturated": false
+              },
+              {
+                "batch_size": 5,
+                "video_size_mb": 50,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5276012420654,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 5,
+                "cpu_usage": 5.1,
+                "memory_usage": 57.0,
+                "saturated": false
+              },
+              {
+                "batch_size": 10,
+                "video_size_mb": 50,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5535950660706,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 10,
+                "cpu_usage": 2.3,
+                "memory_usage": 57.4,
+                "saturated": false
+              },
+              {
+                "batch_size": 20,
+                "video_size_mb": 50,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5339508056641,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 20,
+                "cpu_usage": 2.1,
+                "memory_usage": 57.4,
+                "saturated": false
+              },
+              {
+                "batch_size": 50,
+                "video_size_mb": 50,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.541422367096,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 50,
+                "cpu_usage": 1.6,
+                "memory_usage": 57.5,
+                "saturated": false
+              },
+              {
+                "batch_size": 100,
+                "video_size_mb": 50,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5380313396454,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 100,
+                "cpu_usage": 2.4,
+                "memory_usage": 57.3,
+                "saturated": false
+              }
+            ],
+            "max_sustainable_batch": 100,
+            "max_throughput": 0.0
+          },
+          "sustained": {
+            "test_type": "sustained",
+            "video_size_mb": 50,
+            "workers": 2,
+            "duration_minutes": 3,
+            "videos_processed": 5,
+            "errors": 0,
+            "throughput_videos_per_min": 1.6648648168607978,
+            "results": [
+              {
+                "timestamp": "2025-10-19T19:23:13.726959",
+                "elapsed_minutes": 0.0,
+                "queue_size": 0,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.0,
+                "memory_usage": 57.2
+              },
+              {
+                "timestamp": "2025-10-19T19:23:43.756239",
+                "elapsed_minutes": 0.5006794015566508,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 2.0,
+                "memory_usage": 57.3
+              },
+              {
+                "timestamp": "2025-10-19T19:24:13.785653",
+                "elapsed_minutes": 1.0011770327885945,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.3,
+                "memory_usage": 57.2
+              },
+              {
+                "timestamp": "2025-10-19T19:24:43.816306",
+                "elapsed_minutes": 1.5016804178555807,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 1.9,
+                "memory_usage": 57.2
+              },
+              {
+                "timestamp": "2025-10-19T19:25:13.848693",
+                "elapsed_minutes": 2.0022189140319826,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 2.8,
+                "memory_usage": 57.2
+              },
+              {
+                "timestamp": "2025-10-19T19:25:43.879192",
+                "elapsed_minutes": 2.5027339816093446,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 2.9,
+                "memory_usage": 57.2
+              }
+            ],
+            "stable": true
+          },
+          "capacity_videos_per_min": 1.6648648168607978,
+          "stable": true
+        },
+        {
+          "video_size_mb": 50,
+          "workers": 4,
+          "saturation": {
+            "test_type": "saturation",
+            "video_size_mb": 50,
+            "workers": 4,
+            "results": [
+              {
+                "batch_size": 1,
+                "video_size_mb": 50,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5362377166748,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 1,
+                "cpu_usage": 1.3,
+                "memory_usage": 57.5,
+                "saturated": false
+              },
+              {
+                "batch_size": 2,
+                "video_size_mb": 50,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5366408824921,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 2,
+                "cpu_usage": 4.5,
+                "memory_usage": 57.5,
+                "saturated": false
+              },
+              {
+                "batch_size": 5,
+                "video_size_mb": 50,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5325703620911,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 5,
+                "cpu_usage": 3.3,
+                "memory_usage": 57.7,
+                "saturated": false
+              },
+              {
+                "batch_size": 10,
+                "video_size_mb": 50,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5255856513977,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 10,
+                "cpu_usage": 5.8,
+                "memory_usage": 57.8,
+                "saturated": false
+              },
+              {
+                "batch_size": 20,
+                "video_size_mb": 50,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.533350944519,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 20,
+                "cpu_usage": 1.8,
+                "memory_usage": 58.0,
+                "saturated": false
+              },
+              {
+                "batch_size": 50,
+                "video_size_mb": 50,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5509252548218,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 50,
+                "cpu_usage": 2.0,
+                "memory_usage": 58.1,
+                "saturated": false
+              },
+              {
+                "batch_size": 100,
+                "video_size_mb": 50,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.532790184021,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 100,
+                "cpu_usage": 2.4,
+                "memory_usage": 58.2,
+                "saturated": false
+              }
+            ],
+            "max_sustainable_batch": 100,
+            "max_throughput": 0.0
+          },
+          "sustained": {
+            "test_type": "sustained",
+            "video_size_mb": 50,
+            "workers": 4,
+            "duration_minutes": 3,
+            "videos_processed": 5,
+            "errors": 0,
+            "throughput_videos_per_min": 1.6648773068800797,
+            "results": [
+              {
+                "timestamp": "2025-10-19T20:36:36.841952",
+                "elapsed_minutes": 0.0,
+                "queue_size": 0,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.3,
+                "memory_usage": 58.0
+              },
+              {
+                "timestamp": "2025-10-19T20:37:06.871625",
+                "elapsed_minutes": 0.5006762663523356,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.0,
+                "memory_usage": 58.1
+              },
+              {
+                "timestamp": "2025-10-19T20:37:36.901900",
+                "elapsed_minutes": 1.0011894464492799,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 1.5,
+                "memory_usage": 58.2
+              },
+              {
+                "timestamp": "2025-10-19T20:38:06.932646",
+                "elapsed_minutes": 1.5017023046811422,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 1.8,
+                "memory_usage": 58.0
+              },
+              {
+                "timestamp": "2025-10-19T20:38:36.964017",
+                "elapsed_minutes": 2.0022220452626547,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 1.7,
+                "memory_usage": 58.1
+              },
+              {
+                "timestamp": "2025-10-19T20:39:06.993387",
+                "elapsed_minutes": 2.502718178431193,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.5,
+                "memory_usage": 58.1
+              }
+            ],
+            "stable": true
+          },
+          "capacity_videos_per_min": 1.6648773068800797,
+          "stable": true
+        },
+        {
+          "video_size_mb": 100,
+          "workers": 1,
+          "saturation": {
+            "test_type": "saturation",
+            "video_size_mb": 100,
+            "workers": 1,
+            "results": [
+              {
+                "batch_size": 1,
+                "video_size_mb": 100,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5356419086456,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 1,
+                "cpu_usage": 3.4,
+                "memory_usage": 58.2,
+                "saturated": false
+              },
+              {
+                "batch_size": 2,
+                "video_size_mb": 100,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5195000171661,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 2,
+                "cpu_usage": 6.3,
+                "memory_usage": 61.7,
+                "saturated": false
+              },
+              {
+                "batch_size": 5,
+                "video_size_mb": 100,
+                "workers": 1,
+                "videos_processed": 0,
+                "total_time_seconds": 600.508791923523,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 5,
+                "cpu_usage": 3.7,
+                "memory_usage": 61.3,
+                "saturated": false
+              },
+              {
+                "batch_size": 10,
+                "video_size_mb": 100,
+                "workers": 1,
+                "videos_processed": 10,
+                "total_time_seconds": 562.4963047504425,
+                "throughput_videos_per_min": 1.06667367400075,
+                "queue_remaining": 0,
+                "cpu_usage": 5.6,
+                "memory_usage": 61.3,
+                "saturated": false
+              },
+              {
+                "batch_size": 20,
+                "video_size_mb": 100,
+                "workers": 1,
+                "videos_processed": 20,
+                "total_time_seconds": 310.25993371009827,
+                "throughput_videos_per_min": 3.8677246708924393,
+                "queue_remaining": 0,
+                "cpu_usage": 4.9,
+                "memory_usage": 61.6,
+                "saturated": false
+              },
+              {
+                "batch_size": 50,
+                "video_size_mb": 100,
+                "workers": 1,
+                "videos_processed": 50,
+                "total_time_seconds": 308.2737557888031,
+                "throughput_videos_per_min": 9.731610114924237,
+                "queue_remaining": 0,
+                "cpu_usage": 12.0,
+                "memory_usage": 64.1,
+                "saturated": false
+              },
+              {
+                "batch_size": 100,
+                "video_size_mb": 100,
+                "workers": 1,
+                "videos_processed": 100,
+                "total_time_seconds": 308.2806966304779,
+                "throughput_videos_per_min": 19.46278202164545,
+                "queue_remaining": 0,
+                "cpu_usage": 6.4,
+                "memory_usage": 62.6,
+                "saturated": false
+              }
+            ],
+            "max_sustainable_batch": 100,
+            "max_throughput": 19.46278202164545
+          },
+          "sustained": {
+            "test_type": "sustained",
+            "video_size_mb": 100,
+            "workers": 1,
+            "duration_minutes": 3,
+            "videos_processed": 5,
+            "errors": 0,
+            "throughput_videos_per_min": 1.6648727293874128,
+            "results": [
+              {
+                "timestamp": "2025-10-19T21:34:47.069927",
+                "elapsed_minutes": 0.0,
+                "queue_size": 0,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 6.2,
+                "memory_usage": 62.6
+              },
+              {
+                "timestamp": "2025-10-19T21:35:17.100768",
+                "elapsed_minutes": 0.5006984909375508,
+                "queue_size": 45,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 6.3,
+                "memory_usage": 61.9
+              },
+              {
+                "timestamp": "2025-10-19T21:35:47.130309",
+                "elapsed_minutes": 1.001198148727417,
+                "queue_size": 45,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 7.5,
+                "memory_usage": 62.0
+              },
+              {
+                "timestamp": "2025-10-19T21:36:17.159244",
+                "elapsed_minutes": 1.5016810019810996,
+                "queue_size": 45,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 5.4,
+                "memory_usage": 64.2
+              },
+              {
+                "timestamp": "2025-10-19T21:36:47.190359",
+                "elapsed_minutes": 2.002200214068095,
+                "queue_size": 45,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 3.0,
+                "memory_usage": 64.4
+              },
+              {
+                "timestamp": "2025-10-19T21:37:17.223912",
+                "elapsed_minutes": 2.5027536074320476,
+                "queue_size": 45,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 7.1,
+                "memory_usage": 63.9
+              }
+            ],
+            "stable": true
+          },
+          "capacity_videos_per_min": 1.6648727293874128,
+          "stable": true
+        },
+        {
+          "video_size_mb": 100,
+          "workers": 2,
+          "saturation": {
+            "test_type": "saturation",
+            "video_size_mb": 100,
+            "workers": 2,
+            "results": [
+              {
+                "batch_size": 1,
+                "video_size_mb": 100,
+                "workers": 2,
+                "videos_processed": 1,
+                "total_time_seconds": 124.10553789138794,
+                "throughput_videos_per_min": 0.48345948955565166,
+                "queue_remaining": 0,
+                "cpu_usage": 3.6,
+                "memory_usage": 63.9,
+                "saturated": false
+              },
+              {
+                "batch_size": 2,
+                "video_size_mb": 100,
+                "workers": 2,
+                "videos_processed": 2,
+                "total_time_seconds": 310.2813334465027,
+                "throughput_videos_per_min": 0.386745791849866,
+                "queue_remaining": 0,
+                "cpu_usage": 7.0,
+                "memory_usage": 63.5,
+                "saturated": false
+              },
+              {
+                "batch_size": 5,
+                "video_size_mb": 100,
+                "workers": 2,
+                "videos_processed": 5,
+                "total_time_seconds": 308.30693531036377,
+                "throughput_videos_per_min": 0.9730562813904869,
+                "queue_remaining": 0,
+                "cpu_usage": 4.6,
+                "memory_usage": 64.0,
+                "saturated": false
+              },
+              {
+                "batch_size": 10,
+                "video_size_mb": 100,
+                "workers": 2,
+                "videos_processed": 10,
+                "total_time_seconds": 308.27309465408325,
+                "throughput_videos_per_min": 1.946326197144343,
+                "queue_remaining": 0,
+                "cpu_usage": 5.6,
+                "memory_usage": 62.3,
+                "saturated": false
+              },
+              {
+                "batch_size": 20,
+                "video_size_mb": 100,
+                "workers": 2,
+                "videos_processed": 20,
+                "total_time_seconds": 310.28253984451294,
+                "throughput_videos_per_min": 3.867442881579277,
+                "queue_remaining": 0,
+                "cpu_usage": 4.4,
+                "memory_usage": 64.0,
+                "saturated": false
+              },
+              {
+                "batch_size": 50,
+                "video_size_mb": 100,
+                "workers": 2,
+                "videos_processed": 47,
+                "total_time_seconds": 600.5484297275543,
+                "throughput_videos_per_min": 4.695707890335048,
+                "queue_remaining": 3,
+                "cpu_usage": 4.6,
+                "memory_usage": 65.0,
+                "saturated": false
+              },
+              {
+                "batch_size": 100,
+                "video_size_mb": 100,
+                "workers": 2,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5326704978943,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 100,
+                "cpu_usage": 5.1,
+                "memory_usage": 63.2,
+                "saturated": false
+              }
+            ],
+            "max_sustainable_batch": 100,
+            "max_throughput": 4.695707890335048
+          },
+          "sustained": {
+            "test_type": "sustained",
+            "video_size_mb": 100,
+            "workers": 2,
+            "duration_minutes": 3,
+            "videos_processed": 5,
+            "errors": 0,
+            "throughput_videos_per_min": 1.6649017940296382,
+            "results": [
+              {
+                "timestamp": "2025-10-19T22:20:48.715545",
+                "elapsed_minutes": 0.0,
+                "queue_size": 0,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 9.8,
+                "memory_usage": 63.1
+              },
+              {
+                "timestamp": "2025-10-19T22:21:18.743300",
+                "elapsed_minutes": 0.5005011598269145,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 8.6,
+                "memory_usage": 63.5
+              },
+              {
+                "timestamp": "2025-10-19T22:21:48.775886",
+                "elapsed_minutes": 1.001039711634318,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 6.4,
+                "memory_usage": 64.1
+              },
+              {
+                "timestamp": "2025-10-19T22:22:18.809010",
+                "elapsed_minutes": 1.5015857378641764,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 4.8,
+                "memory_usage": 64.1
+              },
+              {
+                "timestamp": "2025-10-19T22:22:48.840704",
+                "elapsed_minutes": 2.0021266182263693,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 4.8,
+                "memory_usage": 64.1
+              },
+              {
+                "timestamp": "2025-10-19T22:23:18.871810",
+                "elapsed_minutes": 2.5026419798533124,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 7.4,
+                "memory_usage": 64.0
+              }
+            ],
+            "stable": true
+          },
+          "capacity_videos_per_min": 1.6649017940296382,
+          "stable": true
+        },
+        {
+          "video_size_mb": 100,
+          "workers": 4,
+          "saturation": {
+            "test_type": "saturation",
+            "video_size_mb": 100,
+            "workers": 4,
+            "results": [
+              {
+                "batch_size": 1,
+                "video_size_mb": 100,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5454185009003,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 1,
+                "cpu_usage": 5.1,
+                "memory_usage": 59.4,
+                "saturated": false
+              },
+              {
+                "batch_size": 2,
+                "video_size_mb": 100,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5351800918579,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 2,
+                "cpu_usage": 21.3,
+                "memory_usage": 63.7,
+                "saturated": false
+              },
+              {
+                "batch_size": 5,
+                "video_size_mb": 100,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5460739135742,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 5,
+                "cpu_usage": 9.6,
+                "memory_usage": 63.4,
+                "saturated": false
+              },
+              {
+                "batch_size": 10,
+                "video_size_mb": 100,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5505981445312,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 10,
+                "cpu_usage": 8.6,
+                "memory_usage": 63.5,
+                "saturated": false
+              },
+              {
+                "batch_size": 20,
+                "video_size_mb": 100,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.558917760849,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 20,
+                "cpu_usage": 5.9,
+                "memory_usage": 60.2,
+                "saturated": false
+              },
+              {
+                "batch_size": 50,
+                "video_size_mb": 100,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5504071712494,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 50,
+                "cpu_usage": 5.6,
+                "memory_usage": 61.5,
+                "saturated": false
+              },
+              {
+                "batch_size": 100,
+                "video_size_mb": 100,
+                "workers": 4,
+                "videos_processed": 0,
+                "total_time_seconds": 600.5438370704651,
+                "throughput_videos_per_min": 0.0,
+                "queue_remaining": 100,
+                "cpu_usage": 9.6,
+                "memory_usage": 61.0,
+                "saturated": false
+              }
+            ],
+            "max_sustainable_batch": 100,
+            "max_throughput": 0.0
+          },
+          "sustained": {
+            "test_type": "sustained",
+            "video_size_mb": 100,
+            "workers": 4,
+            "duration_minutes": 3,
+            "videos_processed": 5,
+            "errors": 0,
+            "throughput_videos_per_min": 1.6648001977716556,
+            "results": [
+              {
+                "timestamp": "2025-10-19T23:34:11.882258",
+                "elapsed_minutes": 0.0,
+                "queue_size": 0,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 9.8,
+                "memory_usage": 60.9
+              },
+              {
+                "timestamp": "2025-10-19T23:34:41.914632",
+                "elapsed_minutes": 0.500746488571167,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 5.4,
+                "memory_usage": 61.2
+              },
+              {
+                "timestamp": "2025-10-19T23:35:11.945056",
+                "elapsed_minutes": 1.001250680287679,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 6.8,
+                "memory_usage": 61.6
+              },
+              {
+                "timestamp": "2025-10-19T23:35:41.977404",
+                "elapsed_minutes": 1.5017845273017882,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 8.3,
+                "memory_usage": 61.4
+              },
+              {
+                "timestamp": "2025-10-19T23:36:12.008970",
+                "elapsed_minutes": 2.002317972977956,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 6.8,
+                "memory_usage": 61.3
+              },
+              {
+                "timestamp": "2025-10-19T23:36:42.040153",
+                "elapsed_minutes": 2.502832090854645,
+                "queue_size": 5,
+                "videos_processed": 5,
+                "errors": 0,
+                "cpu_usage": 5.5,
+                "memory_usage": 61.5
+              }
+            ],
+            "stable": true
+          },
+          "capacity_videos_per_min": 1.6648001977716556,
+          "stable": true
+        }
+      ],
+      "summary": {
+        "max_throughput": 1.6649017940296382,
+        "best_configuration": {
+          "video_size_mb": 100,
+          "workers": 2,
+          "throughput": 1.6649017940296382
+        },
+        "bottlenecks": [],
+        "recommendations": []
+      }
+    },
+    "saturation_analysis": {
+      "error": "Error 10061 connecting to localhost:6379. No se puede establecer una conexi\u00f3n ya que el equipo de destino deneg\u00f3 expresamente dicha conexi\u00f3n."
+    },
+    "stability_analysis": {
+      "error": "Error 10061 connecting to localhost:6379. No se puede establecer una conexi\u00f3n ya que el equipo de destino deneg\u00f3 expresamente dicha conexi\u00f3n."
+    }
+  },
+  "summary": {
+    "execution_status": "completed",
+    "total_tests": 1,
+    "successful_tests": 1,
+    "failed_tests": 0,
+    "key_findings": [],
+    "recommendations": [
+      "Mejor configuraci\u00f3n: 100MB, 2 workers \u2192 1.7 videos/min"
+    ],
+    "capacity_table": [
+      {
+        "video_size_mb": 50,
+        "workers": 1,
+        "capacity_videos_per_min": 1.6647823147478562,
+        "stable": true
+      },
+      {
+        "video_size_mb": 50,
+        "workers": 2,
+        "capacity_videos_per_min": 1.6648648168607978,
+        "stable": true
+      },
+      {
+        "video_size_mb": 50,
+        "workers": 4,
+        "capacity_videos_per_min": 1.6648773068800797,
+        "stable": true
+      },
+      {
+        "video_size_mb": 100,
+        "workers": 1,
+        "capacity_videos_per_min": 1.6648727293874128,
+        "stable": true
+      },
+      {
+        "video_size_mb": 100,
+        "workers": 2,
+        "capacity_videos_per_min": 1.6649017940296382,
+        "stable": true
+      },
+      {
+        "video_size_mb": 100,
+        "workers": 4,
+        "capacity_videos_per_min": 1.6648001977716556,
+        "stable": true
+      }
+    ],
+    "bottleneck_analysis": {}
+  }
+}
