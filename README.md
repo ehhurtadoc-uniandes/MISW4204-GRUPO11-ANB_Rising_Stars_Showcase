@@ -21,6 +21,7 @@ El video de sustentación para la Entrega 1 estará disponible en: [sustentacion
 - **Colecciones Postman**: [collections/](collections/)
 - **API Documentation**: http://localhost:8000/docs (cuando la aplicación esté ejecutándose)
 - **Video de Sustentación**: [sustentacion/Entrega_1/](sustentacion/Entrega_1/)
+- **Pipeline CI/CD**: [GitHub Actions](https://github.com/your-repo/actions) (ver sección CI/CD más abajo)
 
 ## Descripción del Proyecto
 
@@ -246,11 +247,46 @@ El proyecto incluye un análisis completo de capacidad del worker implementado s
 
 ### Ejecutar Análisis de Capacidad
 
+#### 🚀 Demo Rápido (Recomendado para empezar)
 ```bash
-# Demo rápido del Plan B (2 minutos)
+# Demo del Plan B - 2 minutos
 python capacity-planning/run_plan_b_demo.py
+```
 
-# Análisis completo del Plan B
+**Resultado esperado:**
+```
+======================================================================
+DEMO DEL PLAN B - ANÁLISIS DE CAPACIDAD DEL WORKER
+======================================================================
+Estado del demo: completed
+Componentes probados: 3
+Componentes exitosos: 3
+Componentes fallidos: 0
+
+==================================================
+MÉTRICAS CLAVE
+==================================================
+Throughput del worker: 30.0 jobs/min
+Trabajos procesados: 1
+Throughput máximo: 4.8 videos/min
+Punto de saturación: 500 trabajos
+Estabilidad: Estable
+Tasa de errores: 0.00%
+
+==================================================
+RECOMENDACIONES
+==================================================
+1. Throughput máximo: 4.8 videos/min
+2. Sistema estable en configuración de prueba
+
+======================================================================
+DEMO COMPLETADO
+======================================================================
+```
+
+#### 📊 Análisis Completo
+```bash
+# Análisis completo del Plan B (10-15 minutos)
 python capacity-planning/plan_b_executor.py
 
 # Pruebas específicas
@@ -258,10 +294,44 @@ python capacity-planning/worker_saturation_test.py --test-type saturation
 python capacity-planning/worker_sustained_test.py --test-type sustained
 ```
 
+#### 🔧 Prerequisitos
+- **Redis**: Debe estar ejecutándose (puerto 6379)
+- **Python**: 3.11+ con dependencias instaladas
+- **Tiempo**: Demo 2 min, Análisis completo 10-15 min
+
+#### 📈 Interpretación de Resultados
+- **Throughput**: Videos procesados por minuto
+- **Saturación**: Punto donde el sistema se degrada
+- **Estabilidad**: Sistema estable bajo carga
+- **Bottlenecks**: CPU, memoria, I/O identificados
+
+#### 🔧 Troubleshooting
+
+**Error: "Redis no conectado"**
+```bash
+# Iniciar Redis con Docker
+docker run -d --name redis -p 6379:6379 redis:alpine
+
+# O con Docker Compose
+docker-compose up redis -d
+```
+
+**Error: "ModuleNotFoundError"**
+```bash
+# Instalar dependencias
+pip install aiohttp psutil redis
+```
+
+**Demo no muestra resultados**
+- Verificar que Redis esté ejecutándose
+- Revisar logs para errores específicos
+- Ejecutar con `python -u` para output sin buffer
+
 ### Documentación del Análisis de Capacidad
 
 - **Plan de Pruebas**: [capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md](capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md)
-- **Resultados de Pruebas**: [capacity-planning/](capacity-planning/)
+- **Resultados de Pruebas**: [capacity-planning/RESULTS_SUMMARY.md](capacity-planning/RESULTS_SUMMARY.md)
+- **Archivos de Resultados**: [capacity-planning/](capacity-planning/)
 - **Scripts de Prueba**: 
   - `worker_bypass.py` - Bypass de la web para inyección directa
   - `simulated_worker.py` - Worker simulado para procesamiento
@@ -273,6 +343,83 @@ python capacity-planning/worker_sustained_test.py --test-type sustained
 - **Configuración óptima**: 50MB con 2 workers (32.1 videos/min)
 - **Estabilidad**: Sistema estable con CPU < 90%, Memory < 85%
 - **Bottlenecks identificados**: CPU, memoria e I/O
+
+## CI/CD Pipeline
+
+### Pipeline de GitHub Actions
+
+El proyecto incluye un pipeline completo de CI/CD que se ejecuta automáticamente en cada push y pull request:
+
+#### Etapas del Pipeline
+
+1. **Tests Unitarios** (`test`)
+   - Ejecuta 32 tests unitarios
+   - Genera reporte de cobertura (54%)
+   - Sube resultados a Codecov
+   - Excluye scripts de capacity-planning
+
+2. **Build Automático** (`build`)
+   - Construye imagen Docker
+   - Valida Docker Compose
+   - **Genera artefacto**: `docker-image.tar`
+   - Retención: 30 días
+
+3. **Análisis de Calidad** (`sonarqube`)
+   - SonarQube scan automático
+   - Detección de vulnerabilidades
+   - Métricas de calidad del código
+
+4. **Security Check** (`security`)
+   - Safety check para dependencias
+   - Bandit security linter
+   - Reportes de seguridad
+
+#### Cómo Usar el Artefacto Generado
+
+El pipeline genera automáticamente un artefacto Docker que puedes descargar y usar:
+
+```bash
+# 1. Descargar artefacto desde GitHub Actions
+# Ir a: Actions → CI/CD Pipeline → build job → Artifacts
+# Descargar: docker-image.tar
+
+# 2. Cargar la imagen Docker
+docker load -i anb-api.tar
+
+# 3. Verificar que se cargó
+docker images | grep anb-api
+
+# 4. Ejecutar la aplicación
+docker run -d --name anb-api -p 8000:8000 anb-api:latest
+
+# 5. Verificar que funciona
+curl http://localhost:8000/health
+```
+
+#### Ubicación del Artefacto
+
+- **GitHub Actions**: `Actions` tab → `CI/CD Pipeline` → `build` job → `Artifacts`
+- **Nombre**: `docker-image`
+- **Formato**: `anb-api.tar` (imagen Docker comprimida)
+- **Retención**: 30 días
+- **Tamaño**: ~100-500MB
+
+#### Comandos Completos
+
+```bash
+# Descargar y usar el artefacto
+wget https://github.com/your-repo/actions/runs/123456789/artifacts/docker-image.tar
+docker load -i docker-image.tar
+docker run -d --name anb-api -p 8000:8000 anb-api:latest
+curl http://localhost:8000/health
+
+# Ver logs
+docker logs anb-api
+
+# Detener
+docker stop anb-api
+docker rm anb-api
+```
 
 ## Documentación Adicional
 
