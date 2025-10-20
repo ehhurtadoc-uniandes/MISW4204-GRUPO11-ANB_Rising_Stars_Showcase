@@ -86,6 +86,14 @@ jobs:
         tags: anb-api:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        outputs: type=docker,dest=/tmp/anb-api.tar
+    
+    - name: Save Docker image as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: docker-image
+        path: /tmp/anb-api.tar
+        retention-days: 30
     
     - name: Install Docker Compose
       run: |
