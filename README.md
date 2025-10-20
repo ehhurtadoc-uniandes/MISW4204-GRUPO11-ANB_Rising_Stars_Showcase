@@ -3,10 +3,10 @@
 ## Información del Equipo
 
 **Grupo 11 - Team ANB**
-- Sergio Fernando Barrera Molano - [sf.barreram1@uniandes.edu.co] - [Rol en el proyecto]
-- Harold Andrés Bartolo Moscoso - [h.bartolo@uniandes.edu.co] - [Rol en el proyecto]
-- Edwin Hernán Hurtado Cruz - [eh.hurtado@uniandes.edu.co] - [Rol en el proyecto]
-- Juan José Restrepo Bonilla - [jj.restrepob1@uniandes.edu.co] - [Rol en el proyecto]
+- Sergio Fernando Barrera Molano - [sf.barreram1@uniandes.edu.co] - Desarrollador / Cloud Junior
+- Harold Andrés Bartolo Moscoso - [h.bartolo@uniandes.edu.co] - Desarrollador / Cloud Junior
+- Edwin Hernán Hurtado Cruz - [eh.hurtado@uniandes.edu.co] - Desarrollador / Cloud Junior
+- Juan José Restrepo Bonilla - [jj.restrepob1@uniandes.edu.co] - Desarrollador / Cloud Junior
 
 *Por favor, actualice esta sección con la información real del equipo antes de la entrega.*
 
