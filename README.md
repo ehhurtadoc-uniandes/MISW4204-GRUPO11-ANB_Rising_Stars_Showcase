@@ -10,7 +10,7 @@
 
 ## Video de Sustentación
 
-El video de sustentación para la Entrega 1 estará disponible en: [sustentacion/Entrega_1/](sustentacion/Entrega_1/)
+El video de sustentación para la Entrega 1 esta disponible en: [sustentacion/Entrega_1/](sustentacion/Entrega_1/)
 
 ## Enlaces Importantes
 
