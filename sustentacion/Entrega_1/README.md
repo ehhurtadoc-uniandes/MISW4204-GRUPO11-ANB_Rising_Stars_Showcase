@@ -10,7 +10,7 @@
 
 ### Enlace al Video
 
-**URL del video**: [[Insertar enlace al video aquí]](https://uniandes-my.sharepoint.com/:f:/g/personal/jj_restrepob1_uniandes_edu_co/EsHppIZO5LtMifUEuMR8__0B56yjdHhbJ3OvqG5OBZBQJw?e=HSPGGr)
+**URL del video**: [[Video]](https://uniandes-my.sharepoint.com/:f:/g/personal/jj_restrepob1_uniandes_edu_co/EsHppIZO5LtMifUEuMR8__0B56yjdHhbJ3OvqG5OBZBQJw?e=HSPGGr)
 
 ### Contenido del Video
 
