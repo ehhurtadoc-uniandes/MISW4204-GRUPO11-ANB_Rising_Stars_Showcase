@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Celery Worker
+  worker:
+    build: .
+    container_name: anb_worker
+    environment:
+      - DATABASE_URL=postgresql://anb_user:${DB_PASSWORD}@${RDS_ENDPOINT}:5432/anb_db
+      - REDIS_URL=redis://${REDIS_ENDPOINT}:6379/0
+      - CELERY_BROKER_URL=redis://${REDIS_ENDPOINT}:6379/0
+      - CELERY_RESULT_BACKEND=redis://${REDIS_ENDPOINT}:6379/0
+      - NFS_SERVER_IP=${NFS_SERVER_IP}
+      - ENVIRONMENT=production
+      - DEBUG=false
+    volumes:
+      - /mnt/nfs/uploads:/app/uploads
+      - /mnt/nfs/processed_videos:/app/processed_videos
+      - /mnt/nfs/assets:/app/assets
+      - ./logs:/app/logs
+    networks:
+      - anb_network
+    restart: unless-stopped
+    command: >
+      sh -c "
+        sleep 15 &&
+        celery -A app.workers.celery_app worker --loglevel=info --concurrency=2 --queues=video_queue
+      "
+    healthcheck:
+      test: ["CMD", "celery", "-A", "app.workers.celery_app", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Celery Flower (Optional - for monitoring)
+  flower:
+    build: .
+    container_name: anb_flower
+    environment:
+      - CELERY_BROKER_URL=redis://${REDIS_ENDPOINT}:6379/0
+      - CELERY_RESULT_BACKEND=redis://${REDIS_ENDPOINT}:6379/0
+    ports:
+      - "5555:5555"
+    networks:
+      - anb_network
+    restart: unless-stopped
+    command: >
+      sh -c "
+        sleep 20 &&
+        celery -A app.workers.celery_app flower --port=5555
+      "
+    profiles:
+      - flower  # Only start when explicitly requested
+
+networks:
+  anb_network:
+    driver: bridge
