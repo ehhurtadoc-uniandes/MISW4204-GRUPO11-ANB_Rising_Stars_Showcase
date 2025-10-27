@@ -15,6 +15,7 @@ El video de sustentación para la Entrega 1 esta disponible en: [sustentacion/En
 ## Enlaces Importantes
 
 - **Documentación Completa**: [docs/Entrega_1/README.md](docs/Entrega_1/README.md)
+- **Análisis de Capacidad - Entrega 2**: [capacity-planning/pruebas_de_carga_entrega2.md](capacity-planning/pruebas_de_carga_entrega2.md)
 - **Plan de Análisis de Capacidad**: [capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md](capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md)
 - **Colecciones Postman**: [collections/](collections/)
 - **API Documentation**: http://localhost:8000/docs (cuando la aplicación esté ejecutándose)
@@ -241,7 +242,7 @@ El proyecto incluye un pipeline de CI/CD con GitHub Actions que:
 
 ## Análisis de Capacidad (Plan B)
 
-El proyecto incluye un análisis completo de capacidad del worker implementado según los requerimientos del documento de análisis de capacidad.
+El proyecto incluye un análisis completo de capacidad del worker implementado según los requerimientos del documento de análisis de capacidad. **Ver [Análisis de Capacidad - Entrega 2](capacity-planning/pruebas_de_carga_entrega2.md) para el reporte completo ejecutado en AWS EC2.**
 
 ### Ejecutar Análisis de Capacidad
 
@@ -327,6 +328,7 @@ pip install aiohttp psutil redis
 
 ### Documentación del Análisis de Capacidad
 
+- **Reporte Completo - Entrega 2**: [capacity-planning/pruebas_de_carga_entrega2.md](capacity-planning/pruebas_de_carga_entrega2.md) - **Análisis ejecutado en AWS EC2**
 - **Plan de Pruebas**: [capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md](capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md)
 - **Resultados de Pruebas**: [capacity-planning/RESULTS_SUMMARY.md](capacity-planning/RESULTS_SUMMARY.md)
 - **Archivos de Resultados**: [capacity-planning/](capacity-planning/)
@@ -422,7 +424,8 @@ docker rm anb-api
 ## Documentación Adicional
 
 - [Entrega 1 - Documentación Completa](docs/Entrega_1/)
-- [Análisis de Capacidad](capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md)
+- [Análisis de Capacidad - Entrega 2](capacity-planning/pruebas_de_carga_entrega2.md) - **Ejecutado en AWS EC2**
+- [Plan de Análisis de Capacidad](capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md)
 - [Video de Sustentación](sustentacion/Entrega_1/)
 
 ## Licencia
