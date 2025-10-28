@@ -12,6 +12,8 @@
 
 El video de sustentación para la Entrega 1 esta disponible en: [sustentacion/Entrega_1/](sustentacion/Entrega_1/)
 
+El video de sustentación para la Entrega 1 esta disponible en: [Sustentacion entrega_2](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/ER30KqTZtkROkaRrtZp3ICkBs7q8I5HYmNjdg73uokdplA?e=SlC9Lt)
+
 ## Enlaces Importantes
 
 - **Documentación Completa**: [docs/Entrega_1/README.md](docs/Entrega_1/README.md)
