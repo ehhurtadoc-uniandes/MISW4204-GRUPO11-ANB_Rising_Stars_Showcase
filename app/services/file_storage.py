@@ -112,6 +112,9 @@ class S3FileStorage(FileStorageInterface):
             aws_session_token = os.getenv('AWS_SESSION_TOKEN')
             if aws_session_token:
                 client_kwargs['aws_session_token'] = aws_session_token
+                logger.info(f"S3 client created with session token (length: {len(aws_session_token)})")
+            else:
+                logger.warning("S3 client created without session token (AWS_SESSION_TOKEN not found in environment)")
         
         self.s3_client = boto3.client('s3', **client_kwargs)
         self.bucket_name = settings.s3_bucket_name
@@ -196,14 +199,37 @@ class S3FileStorage(FileStorageInterface):
                 # Assume it's just the key
                 key = s3_path
             
+            logger.info(f"Downloading from S3: bucket={self.bucket_name}, key={key}, local_path={local_path}")
+            
             # Ensure local directory exists
             os.makedirs(os.path.dirname(local_path), exist_ok=True)
             
+            # Recreate S3 client with current session token if available (for temporary credentials)
+            # This ensures we always use the latest session token
+            aws_session_token = os.getenv('AWS_SESSION_TOKEN')
+            if aws_session_token and settings.aws_access_key_id and settings.aws_secret_access_key:
+                client_kwargs = {
+                    'region_name': settings.aws_region,
+                    'aws_access_key_id': settings.aws_access_key_id,
+                    'aws_secret_access_key': settings.aws_secret_access_key,
+                    'aws_session_token': aws_session_token
+                }
+                s3_client = boto3.client('s3', **client_kwargs)
+            else:
+                s3_client = self.s3_client
+            
             # Download file
-            self.s3_client.download_file(self.bucket_name, key, local_path)
+            s3_client.download_file(self.bucket_name, key, local_path)
+            logger.info(f"Successfully downloaded file from S3 to {local_path}")
             return True
         except ClientError as e:
-            logger.error(f"Error downloading from S3: {str(e)}")
+            error_code = e.response.get('Error', {}).get('Code', 'Unknown')
+            error_message = e.response.get('Error', {}).get('Message', str(e))
+            logger.error(f"Error downloading from S3: {error_code} - {error_message}")
+            logger.error(f"S3 path: {s3_path}, Bucket: {self.bucket_name}, Key: {key}")
+            return False
+        except Exception as e:
+            logger.error(f"Unexpected error downloading from S3: {str(e)}")
             return False
     
     def copy_file(self, src_path: str, dest_path: str) -> bool:
