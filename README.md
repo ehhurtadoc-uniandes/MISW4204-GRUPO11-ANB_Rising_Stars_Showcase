@@ -50,6 +50,23 @@ El sistema está compuesto por los siguientes componentes:
 
 ## Instalación y Despliegue
 
+### Despliegue en AWS
+
+Para desplegar la aplicación en AWS con alta disponibilidad, escalabilidad y seguridad, consulta la **Guía Completa de Despliegue en AWS**:
+
+📖 **[Guía de Despliegue en AWS](docs/AWS_DEPLOYMENT_GUIDE.md)**
+
+La guía incluye instrucciones paso a paso para configurar:
+- ✅ VPC y Networking
+- ✅ RDS (PostgreSQL)
+- ✅ EC2 Redis
+- ✅ S3 Bucket
+- ✅ Application Load Balancer (ALB)
+- ✅ Auto Scaling Group (Backend)
+- ✅ EC2 Worker
+- ✅ Security Groups y IAM Roles
+- ✅ Integración con S3
+
 ### Prerrequisitos
 - Docker y Docker Compose
 - Python 3.13+ (para desarrollo local)
