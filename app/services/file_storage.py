@@ -208,6 +208,7 @@ class S3FileStorage(FileStorageInterface):
             # This ensures we always use the latest session token
             aws_session_token = os.getenv('AWS_SESSION_TOKEN')
             if aws_session_token and settings.aws_access_key_id and settings.aws_secret_access_key:
+                logger.info(f"Recreating S3 client with session token (length: {len(aws_session_token)})")
                 client_kwargs = {
                     'region_name': settings.aws_region,
                     'aws_access_key_id': settings.aws_access_key_id,
@@ -215,7 +216,9 @@ class S3FileStorage(FileStorageInterface):
                     'aws_session_token': aws_session_token
                 }
                 s3_client = boto3.client('s3', **client_kwargs)
+                logger.info("S3 client recreated with session token")
             else:
+                logger.warning("Using existing S3 client (no session token or credentials missing)")
                 s3_client = self.s3_client
             
             # Download file
