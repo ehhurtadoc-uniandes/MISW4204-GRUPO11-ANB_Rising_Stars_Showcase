@@ -44,13 +44,24 @@ def process_video_task(self, video_id: str, video_path: str):
     """Process video: trim, resize, add watermark"""
     db = SessionLocal()
     file_storage = get_file_storage()
+    local_video_path = None
     
     try:
         # Update status to processing
         VideoService.update_video_status(db, video_id, VideoStatus.processing)
         
+        # Handle S3 paths: download to local temp file if needed
+        if video_path.startswith('s3://'):
+            logger.info(f"Downloading video from S3: {video_path}")
+            local_video_path = f"/tmp/{uuid.uuid4()}.mp4"
+            if not file_storage.download_file(video_path, local_video_path):
+                raise Exception(f"Failed to download video from S3: {video_path}")
+            video_path_to_use = local_video_path
+        else:
+            video_path_to_use = video_path
+        
         # Load video
-        video_clip = VideoFileClip(video_path)
+        video_clip = VideoFileClip(video_path_to_use)
         
         # Get video duration and trim to max 30 seconds
         duration = min(video_clip.duration, settings.video_max_duration)
@@ -113,20 +124,36 @@ def process_video_task(self, video_id: str, video_path: str):
         
         # Generate output filename
         output_filename = f"processed_{uuid.uuid4()}.mp4"
-        output_path = os.path.join(settings.processed_dir, output_filename)
+        local_output_path = os.path.join("/tmp", output_filename)
         
-        # Ensure output directory exists
-        os.makedirs(settings.processed_dir, exist_ok=True)
-        
-        # Export processed video
+        # Export processed video to local temp file
         final_video.write_videofile(
-            output_path,
+            local_output_path,
             codec='libx264',
             audio_codec='aac' if final_video.audio else None,
             temp_audiofile='temp-audio.m4a',
             remove_temp=True,
             fps=24
         )
+        
+        # Upload processed video to S3 if using cloud storage
+        if settings.storage_type == 'cloud':
+            logger.info(f"Uploading processed video to S3")
+            with open(local_output_path, 'rb') as f:
+                processed_file_data = f.read()
+            
+            processed_path = file_storage.save_file(
+                processed_file_data,
+                output_filename,
+                settings.processed_dir
+            )
+            
+            # Clean up local temp file
+            if os.path.exists(local_output_path):
+                os.remove(local_output_path)
+        else:
+            # Local storage: use local path
+            processed_path = local_output_path
         
         # Clean up
         video_clip.close()
@@ -136,13 +163,17 @@ def process_video_task(self, video_id: str, video_path: str):
         if os.path.exists(logo_path):
             os.remove(logo_path)
         
+        # Clean up downloaded original video if it was from S3
+        if local_video_path and os.path.exists(local_video_path):
+            os.remove(local_video_path)
+        
         # Update database with success
         VideoService.update_video_status(
-            db, video_id, VideoStatus.processed, processed_path=output_path
+            db, video_id, VideoStatus.processed, processed_path=processed_path
         )
         
         logger.info(f"Video {video_id} processed successfully")
-        return f"Video processed successfully: {output_path}"
+        return f"Video processed successfully: {processed_path}"
         
     except Exception as e:
         logger.error(f"Error processing video {video_id}: {str(e)}")

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 import os
 import shutil
+import logging
 from app.core.config import settings
 try:
     import boto3
@@ -9,6 +10,8 @@ try:
     BOTO3_AVAILABLE = True
 except ImportError:
     BOTO3_AVAILABLE = False
+
+logger = logging.getLogger(__name__)
 
 
 class FileStorageInterface(ABC):
@@ -175,6 +178,27 @@ class S3FileStorage(FileStorageInterface):
             self.s3_client.head_object(Bucket=self.bucket_name, Key=key)
             return True
         except ClientError:
+            return False
+    
+    def download_file(self, s3_path: str, local_path: str) -> bool:
+        """Download file from S3 to local path"""
+        try:
+            # Extract key from S3 path
+            if s3_path.startswith('s3://'):
+                # Remove s3://bucket/ prefix
+                key = s3_path.replace(f's3://{self.bucket_name}/', '')
+            else:
+                # Assume it's just the key
+                key = s3_path
+            
+            # Ensure local directory exists
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+            
+            # Download file
+            self.s3_client.download_file(self.bucket_name, key, local_path)
+            return True
+        except ClientError as e:
+            logger.error(f"Error downloading from S3: {str(e)}")
             return False
     
     def copy_file(self, src_path: str, dest_path: str) -> bool:
