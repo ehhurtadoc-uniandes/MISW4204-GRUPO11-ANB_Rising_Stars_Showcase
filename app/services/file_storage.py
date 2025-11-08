@@ -107,6 +107,11 @@ class S3FileStorage(FileStorageInterface):
         if settings.aws_access_key_id and settings.aws_secret_access_key:
             client_kwargs['aws_access_key_id'] = settings.aws_access_key_id
             client_kwargs['aws_secret_access_key'] = settings.aws_secret_access_key
+            # Session token is required for temporary credentials (STS)
+            # Get it directly from environment if available
+            aws_session_token = os.getenv('AWS_SESSION_TOKEN')
+            if aws_session_token:
+                client_kwargs['aws_session_token'] = aws_session_token
         
         self.s3_client = boto3.client('s3', **client_kwargs)
         self.bucket_name = settings.s3_bucket_name
