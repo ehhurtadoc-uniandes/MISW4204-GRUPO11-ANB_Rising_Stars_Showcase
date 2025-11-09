@@ -164,14 +164,27 @@ class S3FileStorage(FileStorageInterface):
         try:
             # Extract key from path
             if file_path.startswith('s3://'):
+                # S3 path: s3://bucket/key
                 key = file_path.replace(f's3://{self.bucket_name}/', '')
+            elif file_path.startswith('http://') or file_path.startswith('https://'):
+                # HTTP URL: https://bucket.s3.region.amazonaws.com/key
+                # Extract key from URL
+                # Format: https://bucket.s3.region.amazonaws.com/prefix/filename
+                url_parts = file_path.split('.amazonaws.com/')
+                if len(url_parts) > 1:
+                    key = url_parts[1]
+                else:
+                    # Fallback: try to extract from URL
+                    key = file_path.split(f'{self.bucket_name}.s3.{settings.aws_region}.amazonaws.com/')[-1]
             else:
                 # Assume it's just the key
                 key = file_path
             
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
+            logger.info(f"Deleted file from S3: bucket={self.bucket_name}, key={key}")
             return True
-        except ClientError:
+        except ClientError as e:
+            logger.error(f"Error deleting file from S3: {str(e)}")
             return False
     
     def file_exists(self, file_path: str) -> bool:

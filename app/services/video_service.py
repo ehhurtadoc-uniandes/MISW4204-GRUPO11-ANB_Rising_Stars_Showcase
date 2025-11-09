@@ -5,6 +5,7 @@ from app.models.video import Video, VideoStatus
 from app.models.user import User
 from app.models.vote import Vote
 from app.schemas.video import VideoCreate
+from app.services.file_storage import get_file_storage
 import os
 import uuid
 
@@ -52,17 +53,32 @@ class VideoService:
         if not video:
             return False
         
-        # Check if video can be deleted (not published for voting)
-        # For now, we allow deletion if status is uploaded or failed
-        if video.status not in [VideoStatus.uploaded, VideoStatus.failed]:
+        # Check if video can be deleted
+        # Allow deletion of uploaded, failed, or processed videos
+        # Only block deletion if video is currently being processed
+        if video.status == VideoStatus.processing:
             return False
         
-        # Delete physical files
+        # Delete physical files (works with both local and S3 storage)
         try:
-            if os.path.exists(video.original_path):
-                os.remove(video.original_path)
-            if video.processed_path and os.path.exists(video.processed_path):
-                os.remove(video.processed_path)
+            file_storage = get_file_storage()
+            # Delete original file
+            if video.original_path:
+                if video.original_path.startswith('s3://') or video.original_path.startswith('http'):
+                    # S3 path or URL - use file_storage.delete_file
+                    file_storage.delete_file(video.original_path)
+                elif os.path.exists(video.original_path):
+                    # Local file
+                    os.remove(video.original_path)
+            
+            # Delete processed file
+            if video.processed_path:
+                if video.processed_path.startswith('s3://') or video.processed_path.startswith('http'):
+                    # S3 path or URL - use file_storage.delete_file
+                    file_storage.delete_file(video.processed_path)
+                elif os.path.exists(video.processed_path):
+                    # Local file
+                    os.remove(video.processed_path)
         except Exception:
             pass  # Continue even if file deletion fails
         

@@ -711,7 +711,7 @@ CELERY_BROKER_URL=redis://10.0.131.51:6379/0
 CELERY_RESULT_BACKEND=redis://10.0.131.51:6379/0
 
 # JWT Configuration
-SECRET_KEY=7ee64d0f3e90149cbfcbe6c173b705b82e6db7887de51043a6c37e0ab319361f
+SECRET_KEY=6da78a1c9d50ebc82c4022c07994f21e7618dd73d9fca80fb2ef7f74c42adea2
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
@@ -1008,6 +1008,31 @@ sudo systemctl status anb-api
 2. Copiar el **DNS name** (ej: `anb-alb-123456789.us-east-1.elb.amazonaws.com`)
 3. Este será el endpoint público de tu aplicación
 
+#### 9.4 Acceder a Swagger/OpenAPI Documentation
+
+Una vez que el ALB esté configurado y las instancias estén saludables, puedes acceder a la documentación de la API:
+
+**Swagger UI (Interfaz interactiva):**
+```
+http://<ALB-DNS>/docs
+```
+Ejemplo: `http://anb-alb-123456789.us-east-1.elb.amazonaws.com/docs`
+
+**ReDoc (Documentación alternativa):**
+```
+http://<ALB-DNS>/redoc
+```
+
+**OpenAPI Schema (JSON):**
+```
+http://<ALB-DNS>/openapi.json
+```
+
+**Nota:** Swagger está habilitado en producción por defecto. Si no puedes acceder:
+- Verifica que las instancias del Target Group estén "Healthy"
+- Verifica que el Security Group del ALB permita tráfico HTTP (puerto 80) desde tu IP
+- Verifica que el Target Group esté configurado correctamente (puerto 8000)
+
 ---
 
 ### Paso 10: EC2 Worker
@@ -1096,12 +1121,12 @@ POSTGRES_PASSWORD=anb_password
 POSTGRES_DB=anbdb
 
 # Redis (EC2 Redis - IP privada)
-REDIS_URL=redis://10.0.131.51:6379/0
-CELERY_BROKER_URL=redis://10.0.131.51:6379/0
-CELERY_RESULT_BACKEND=redis://10.0.131.51:6379/0
+REDIS_URL=redis://10.0.135.240:6379/0
+CELERY_BROKER_URL=redis://10.0.135.240:6379/0
+CELERY_RESULT_BACKEND=redis://10.0.135.240:6379/0
 
 # JWT Configuration
-SECRET_KEY=7ee64d0f3e90149cbfcbe6c173b705b82e6db7887de51043a6c37e0ab319361f
+SECRET_KEY=6da78a1c9d50ebc82c4022c07994f21e7618dd73d9fca80fb2ef7f74c42adea2
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
@@ -1114,9 +1139,10 @@ S3_PROCESSED_PREFIX=processed_videos/
 
 # AWS Credentials (solo para escritura - bucket es público para lectura)
 # NOTA: Si las credenciales empiezan con "ASIA", son temporales y requieren AWS_SESSION_TOKEN
-AWS_ACCESS_KEY_ID=REEMPLAZAR_CON_TU_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY=REEMPLAZAR_CON_TU_SECRET_ACCESS_KEY
-AWS_SESSION_TOKEN=REEMPLAZAR_CON_TU_SESSION_TOKEN_SI_LAS_CREDENCIALES_SON_TEMPORALES
+AWS_ACCESS_KEY_ID=a
+AWS_SECRET_ACCESS_KEY=a
+AWS_SESSION_TOKEN=a
+
 
 # Environment
 ENVIRONMENT=production

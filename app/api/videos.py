@@ -204,10 +204,12 @@ def delete_video(
         )
     
     # Check if video can be deleted
-    if video.status not in [VideoStatus.uploaded, VideoStatus.failed]:
+    # Allow deletion of uploaded, failed, or processed videos
+    # Only block deletion if video is currently being processed
+    if video.status == VideoStatus.processing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No se puede eliminar el video porque ya está siendo procesado o habilitado para votación"
+            detail="No se puede eliminar el video porque está siendo procesado actualmente"
         )
     
     success = VideoService.delete_video(db, video_id, current_user.id)

@@ -9,12 +9,15 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Swagger/OpenAPI documentation is always enabled
+# docs_url and redoc_url are explicitly set to ensure they work in production
 app = FastAPI(
     title="ANB Rising Stars Showcase API",
     description="API para la plataforma de gestión de talentos de baloncesto de la ANB",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    docs_url="/docs",  # Swagger UI - always enabled
+    redoc_url="/redoc",  # ReDoc - always enabled
+    openapi_url="/openapi.json"  # OpenAPI schema - always enabled
 )
 
 # Add CORS middleware
