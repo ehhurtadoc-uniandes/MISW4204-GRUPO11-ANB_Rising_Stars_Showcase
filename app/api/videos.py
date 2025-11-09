@@ -92,14 +92,32 @@ def get_my_videos(
     videos = VideoService.get_user_videos(db, current_user.id)
     
     result = []
+    file_storage = get_file_storage()
     for video in videos:
+        # Get processed URL: if processed_path is a URL (starts with http), use it directly
+        # Otherwise, if it's an S3 path, get the public URL, or use download endpoint for local
+        processed_url = None
+        if video.status == VideoStatus.processed and video.processed_path:
+            if video.processed_path.startswith('http://') or video.processed_path.startswith('https://'):
+                # Already a public URL
+                processed_url = video.processed_path
+            elif video.processed_path.startswith('s3://'):
+                # S3 path, extract filename and get public URL
+                # Extract filename from S3 path: s3://bucket/prefix/filename
+                parts = video.processed_path.split('/')
+                filename = parts[-1]
+                processed_url = file_storage.get_file_path(filename, settings.processed_dir)
+            else:
+                # Local path, use download endpoint
+                processed_url = f"/api/videos/{video.id}/download"
+        
         video_data = VideoListResponse(
             video_id=str(video.id),
             title=video.title,
             status=video.status,
             uploaded_at=video.created_at,
             processed_at=video.processed_at,
-            processed_url=f"/api/videos/{video.id}/download" if video.status == VideoStatus.processed else None
+            processed_url=processed_url
         )
         result.append(video_data)
     
@@ -132,6 +150,24 @@ def get_video_detail(
     # Get vote count
     vote_count = VideoService.get_video_vote_count(db, video_id)
     
+    # Get processed URL: if processed_path is a URL (starts with http), use it directly
+    # Otherwise, if it's an S3 path, get the public URL, or use download endpoint for local
+    file_storage = get_file_storage()
+    processed_url = None
+    if video.status == VideoStatus.processed and video.processed_path:
+        if video.processed_path.startswith('http://') or video.processed_path.startswith('https://'):
+            # Already a public URL
+            processed_url = video.processed_path
+        elif video.processed_path.startswith('s3://'):
+            # S3 path, extract filename and get public URL
+            # Extract filename from S3 path: s3://bucket/prefix/filename
+            parts = video.processed_path.split('/')
+            filename = parts[-1]
+            processed_url = file_storage.get_file_path(filename, settings.processed_dir)
+        else:
+            # Local path, use download endpoint
+            processed_url = f"/api/videos/{video.id}/download"
+    
     return VideoResponse(
         video_id=str(video.id),
         title=video.title,
@@ -139,7 +175,7 @@ def get_video_detail(
         uploaded_at=video.created_at,
         processed_at=video.processed_at,
         original_url=f"/api/videos/{video.id}/original" if video.original_path else None,
-        processed_url=f"/api/videos/{video.id}/download" if video.status == VideoStatus.processed else None,
+        processed_url=processed_url,
         votes=vote_count
     )
 

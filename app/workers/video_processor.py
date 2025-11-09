@@ -142,11 +142,20 @@ def process_video_task(self, video_id: str, video_path: str):
             with open(local_output_path, 'rb') as f:
                 processed_file_data = f.read()
             
-            processed_path = file_storage.save_file(
+            # Save to S3 and get the S3 path
+            s3_path = file_storage.save_file(
                 processed_file_data,
                 output_filename,
                 settings.processed_dir
             )
+            
+            # Get the public URL for the processed video
+            # Extract filename from output_filename to get the public URL
+            processed_path = file_storage.get_file_path(
+                output_filename,
+                settings.processed_dir
+            )
+            logger.info(f"Processed video saved to S3, public URL: {processed_path}")
             
             # Clean up local temp file
             if os.path.exists(local_output_path):

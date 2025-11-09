@@ -5,9 +5,11 @@ from app.core.database import get_db
 from app.core.auth import get_current_active_user
 from app.services.video_service import VideoService
 from app.services.vote_service import VoteService
+from app.services.file_storage import get_file_storage
 from app.schemas.vote import VoteResponse, RankingItem, PublicVideoResponse
 from app.schemas.user import UserResponse
 from app.models.video import VideoStatus
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -22,15 +24,33 @@ def get_public_videos(
     videos = VideoService.get_public_videos(db, limit, offset)
     
     result = []
+    file_storage = get_file_storage()
     for video in videos:
         vote_count = VideoService.get_video_vote_count(db, str(video.id))
+        
+        # Get processed URL: if processed_path is a URL (starts with http), use it directly
+        # Otherwise, if it's an S3 path, get the public URL, or use download endpoint for local
+        processed_url = None
+        if video.processed_path:
+            if video.processed_path.startswith('http://') or video.processed_path.startswith('https://'):
+                # Already a public URL
+                processed_url = video.processed_path
+            elif video.processed_path.startswith('s3://'):
+                # S3 path, extract filename and get public URL
+                # Extract filename from S3 path: s3://bucket/prefix/filename
+                parts = video.processed_path.split('/')
+                filename = parts[-1]
+                processed_url = file_storage.get_file_path(filename, settings.processed_dir)
+            else:
+                # Local path, use download endpoint
+                processed_url = f"/api/videos/{video.id}/download"
         
         video_data = PublicVideoResponse(
             video_id=str(video.id),
             title=video.title,
             username=f"{video.owner.first_name} {video.owner.last_name}",
             city=video.owner.city,
-            processed_url=f"/api/videos/{video.id}/download",
+            processed_url=processed_url,
             votes=vote_count
         )
         result.append(video_data)
