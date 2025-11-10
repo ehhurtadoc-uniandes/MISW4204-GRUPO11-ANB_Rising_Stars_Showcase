@@ -4,6 +4,12 @@
 
 📹 **[Video de Sustentación - Entrega 3](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/EVCUxa-NzfpFqHhbelp9JncBadBKy3sSelYfrgdUvq8WCQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=JNtdTx)** - Video de sustentación de la Entrega 3
 
+## 📚 Documentación Relacionada
+
+- **Guía de Despliegue en AWS** - Este documento (documentación completa de la arquitectura y despliegue en AWS)
+- **[Diagrama de Arquitectura AWS](Arquitectura.drawio.pdf)** - Diagrama visual de la arquitectura del sistema
+- **[Documento de Pruebas - Entrega 3](../capacity-planning/Documento%20de%20Pruebas%20Proyecto%20-%20Entrega%203.pdf)** - Documento completo de pruebas de capacidad y rendimiento
+
 ---
 
 ## 📋 Tabla de Contenidos
