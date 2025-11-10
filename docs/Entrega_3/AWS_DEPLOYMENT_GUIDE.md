@@ -1,5 +1,11 @@
 # Guía de Despliegue en AWS - ANB Rising Stars Showcase
 
+## 🎥 Video de Sustentación
+
+📹 **[Video de Sustentación - Entrega 3](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/EVCUxa-NzfpFqHhbelp9JncBadBKy3sSelYfrgdUvq8WCQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=JNtdTx)** - Video de sustentación de la Entrega 3
+
+---
+
 ## 📋 Tabla de Contenidos
 
 1. [Prerrequisitos](#prerrequisitos)
