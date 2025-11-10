@@ -456,6 +456,7 @@ docker rm anb-api
 ### Entrega 3
 - **[Guía de Despliegue en AWS](docs/Entrega_3/AWS_DEPLOYMENT_GUIDE.md)** - Documentación completa de la arquitectura y despliegue en AWS
 - **[Diagrama de Arquitectura AWS](docs/Entrega_3/Arquitectura.drawio.pdf)** - Diagrama visual de la arquitectura del sistema
+- **[Documento de Pruebas - Entrega 3](capacity-planning/Documento%20de%20Pruebas%20Proyecto%20-%20Entrega%203.pdf)** - Documento completo de pruebas de capacidad y rendimiento
 
 ## Licencia
 
