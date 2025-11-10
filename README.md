@@ -54,18 +54,21 @@ El sistema está compuesto por los siguientes componentes:
 
 Para desplegar la aplicación en AWS con alta disponibilidad, escalabilidad y seguridad, consulta la **Guía Completa de Despliegue en AWS**:
 
-📖 **[Guía de Despliegue en AWS](docs/AWS_DEPLOYMENT_GUIDE.md)**
+📖 **[Guía de Despliegue en AWS - Entrega 3](docs/Entrega_3/AWS_DEPLOYMENT_GUIDE.md)**
+
+📐 **[Diagrama de Arquitectura AWS](docs/Entrega_3/Arquitectura.drawio.pdf)** - Diagrama visual de la arquitectura completa del sistema en AWS
 
 La guía incluye instrucciones paso a paso para configurar:
 - ✅ VPC y Networking
 - ✅ RDS (PostgreSQL)
 - ✅ EC2 Redis
-- ✅ S3 Bucket
+- ✅ S3 Bucket (usado por Backend y Worker)
 - ✅ Application Load Balancer (ALB)
 - ✅ Auto Scaling Group (Backend)
 - ✅ EC2 Worker
 - ✅ Security Groups y IAM Roles
 - ✅ Integración con S3
+- ✅ Scripts de automatización de despliegue
 
 ### Prerrequisitos
 - Docker y Docker Compose
@@ -442,10 +445,17 @@ docker rm anb-api
 
 ## Documentación Adicional
 
-- [Entrega 1 - Documentación Completa](docs/Entrega_1/)
+### Entrega 1
+- [Documentación Completa](docs/Entrega_1/)
+- [Video de Sustentación](sustentacion/Entrega_1/)
+
+### Entrega 2
 - [Análisis de Capacidad - Entrega 2](capacity-planning/pruebas_de_carga_entrega2.md) - **Ejecutado en AWS EC2**
 - [Plan de Análisis de Capacidad](capacity-planning/CAPACITY_ANALYSIS_PLAN_B.md)
-- [Video de Sustentación](sustentacion/Entrega_1/)
+
+### Entrega 3
+- **[Guía de Despliegue en AWS](docs/Entrega_3/AWS_DEPLOYMENT_GUIDE.md)** - Documentación completa de la arquitectura y despliegue en AWS
+- **[Diagrama de Arquitectura AWS](docs/Entrega_3/Arquitectura.drawio.pdf)** - Diagrama visual de la arquitectura del sistema
 
 ## Licencia
 

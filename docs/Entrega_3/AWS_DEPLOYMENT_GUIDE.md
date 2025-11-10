@@ -35,6 +35,13 @@
 
 ## Arquitectura AWS
 
+### Diagrama de Arquitectura
+
+Para una visualización detallada de la arquitectura, consulta el **Diagrama de Arquitectura AWS**:
+📐 **[Arquitectura.drawio.pdf](Arquitectura.drawio.pdf)**
+
+### Modelo de Despliegue
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        Internet                              │
@@ -72,6 +79,163 @@
    │ Worker  │    │ Worker   │
    └─────────┘    └──────────┘
 ```
+
+### Descripción de Componentes
+
+#### 1. Application Load Balancer (ALB)
+- **Función**: Distribuye el tráfico HTTP/HTTPS entrante entre múltiples instancias del backend
+- **Tecnología**: AWS Application Load Balancer
+- **Configuración**: 
+  - Escucha en puerto 80 (HTTP) y 443 (HTTPS)
+  - Health checks en `/health`
+  - Target Group apunta a instancias backend en puerto 8000
+
+#### 2. Auto Scaling Group (ASG) - Backend
+- **Función**: Grupo de instancias EC2 que ejecutan la API FastAPI
+- **Tecnología**: AWS Auto Scaling Group con Launch Template
+- **Configuración**:
+  - Mínimo: 2 instancias
+  - Deseado: 2 instancias
+  - Máximo: 5 instancias
+  - Escalado basado en CPU (target: 70%)
+- **Instancias**: EC2 con Docker, ejecutando contenedor `anb-api`
+
+#### 3. RDS PostgreSQL
+- **Función**: Base de datos relacional para almacenar usuarios, videos, votos
+- **Tecnología**: AWS RDS PostgreSQL 15.x
+- **Configuración**:
+  - Multi-AZ para alta disponibilidad
+  - Backups automáticos habilitados
+  - Acceso solo desde VPC privada
+
+#### 4. EC2 Redis
+- **Función**: Broker de mensajes para Celery y almacenamiento de resultados
+- **Tecnología**: Redis en instancia EC2 (alternativa económica a ElastiCache)
+- **Configuración**:
+  - Puerto 6379
+  - Persistencia habilitada (AOF)
+  - Acceso solo desde VPC privada
+
+#### 5. S3 Bucket
+- **Función**: Almacenamiento de videos originales y procesados
+- **Tecnología**: AWS S3
+- **Uso por Componentes**:
+  - **Backend (API)**: 
+    - Sube videos originales al prefix `uploads/`
+    - Lee URLs públicas de videos procesados
+    - Elimina videos cuando se solicita
+  - **Worker (Celery)**:
+    - Descarga videos originales desde `uploads/` para procesarlos
+    - Sube videos procesados al prefix `processed_videos/`
+    - Genera URLs públicas para acceso directo
+- **Configuración**:
+  - Bucket público para lectura (GET)
+  - Requiere credenciales AWS para escritura (PUT/DELETE)
+  - Versionado habilitado
+
+#### 6. EC2 Worker
+- **Función**: Procesa videos de forma asíncrona (trim, resize, watermark)
+- **Tecnología**: Celery workers en instancias EC2 con Docker
+- **Configuración**:
+  - Concurrencia: 2 workers por instancia
+  - Cola: `video_queue`
+  - Escucha tareas desde Redis
+- **Flujo de Trabajo**:
+  1. Recibe tarea de procesamiento desde Redis
+  2. Descarga video original desde S3 (`uploads/`)
+  3. Procesa video localmente (MoviePy)
+  4. Sube video procesado a S3 (`processed_videos/`)
+  5. Actualiza estado en base de datos
+
+### Modelo de Componentes
+
+#### Capa de Presentación
+- **Application Load Balancer**: Punto de entrada público
+- **Swagger/OpenAPI**: Documentación interactiva en `/docs`
+
+#### Capa de Aplicación
+- **FastAPI Backend**: API REST con endpoints para:
+  - Autenticación (JWT)
+  - Gestión de usuarios
+  - Carga de videos
+  - Consulta de videos
+  - Sistema de votación
+  - Rankings públicos
+
+#### Capa de Procesamiento
+- **Celery Workers**: Procesamiento asíncrono de videos:
+  - Recorte a 30 segundos
+  - Redimensionamiento a 720p
+  - Adición de watermark ANB
+  - Generación de intro/outro
+
+#### Capa de Datos
+- **PostgreSQL (RDS)**: Datos estructurados:
+  - Usuarios
+  - Videos (metadatos)
+  - Votos
+  - Rankings
+- **Redis (EC2)**: Datos temporales:
+  - Cola de tareas Celery
+  - Resultados de tareas
+  - Cache (opcional)
+
+#### Capa de Almacenamiento
+- **S3 Bucket**: Almacenamiento de objetos:
+  - Videos originales (`uploads/`)
+  - Videos procesados (`processed_videos/`)
+  - Assets estáticos (`assets/`)
+
+### Cambios con Respecto a la Entrega Anterior
+
+#### Entrega 2 → Entrega 3
+
+1. **Migración de Almacenamiento Local a S3**:
+   - **Antes**: Videos almacenados localmente en instancias EC2
+   - **Ahora**: Videos almacenados en S3 bucket público
+   - **Beneficio**: Escalabilidad, persistencia, acceso público directo
+
+2. **Integración Worker-S3**:
+   - **Antes**: Worker procesaba videos desde almacenamiento local
+   - **Ahora**: Worker descarga desde S3, procesa, y sube resultado a S3
+   - **Beneficio**: Desacoplamiento, múltiples workers pueden procesar desde mismo origen
+
+3. **URLs Públicas de Videos**:
+   - **Antes**: URLs presignadas temporales o acceso interno
+   - **Ahora**: URLs públicas directas desde S3
+   - **Beneficio**: Acceso directo sin autenticación, mejor rendimiento
+
+4. **Configuración de Seguridad S3**:
+   - **Bucket Policy**: Lectura pública, escritura privada
+   - **Credenciales AWS**: Solo para escritura (PUT/DELETE)
+   - **Beneficio**: Seguridad mejorada, usuarios pueden ver sin credenciales
+
+5. **Scripts de Automatización**:
+   - **Nuevo**: Scripts de user data para automatizar despliegue
+   - **Beneficio**: Despliegue consistente y reproducible
+
+### Tecnologías y Servicios Incorporados
+
+#### Servicios AWS
+- **VPC**: Red privada aislada con subnets públicas y privadas
+- **RDS**: Base de datos PostgreSQL administrada
+- **EC2**: Instancias virtuales para backend, workers y Redis
+- **S3**: Almacenamiento de objetos escalable
+- **ALB**: Balanceador de carga de aplicación
+- **Auto Scaling**: Escalado automático basado en métricas
+- **Security Groups**: Firewall a nivel de instancia
+- **NAT Gateway**: Acceso a internet desde subnets privadas
+
+#### Tecnologías de Aplicación
+- **FastAPI**: Framework web moderno y rápido
+- **Celery**: Sistema de colas de tareas distribuidas
+- **Redis**: Broker de mensajes y cache
+- **PostgreSQL**: Base de datos relacional
+- **Docker**: Containerización de aplicaciones
+- **MoviePy**: Procesamiento de video
+- **Boto3**: SDK de AWS para Python
+- **SQLAlchemy**: ORM para acceso a base de datos
+- **Pydantic**: Validación de datos y configuración
 
 ---
 
@@ -1113,20 +1277,20 @@ git clone https://github.com/ehhurtadoc-uniandes/MISW4204-GRUPO11-ANB_Rising_Sta
 # Crear archivo .env
 cat > .env << EOF
 # Database (RDS)
-DATABASE_URL=postgresql://anb_user:anb_password@anb-db.c4lgkryqdvqm.us-east-1.rds.amazonaws.com:5432/anbdb
-POSTGRES_HOST=anb-db.c4lgkryqdvqm.us-east-1.rds.amazonaws.com
+DATABASE_URL=postgresql://anb_user:anb_password@anb-db.cqorwictbr3v.us-east-1.rds.amazonaws.com:5432/anbdb
+POSTGRES_HOST=anb-db.cqorwictbr3v.us-east-1.rds.amazonaws.com
 POSTGRES_PORT=5432
 POSTGRES_USER=anb_user
 POSTGRES_PASSWORD=anb_password
 POSTGRES_DB=anbdb
 
 # Redis (EC2 Redis - IP privada)
-REDIS_URL=redis://10.0.135.240:6379/0
-CELERY_BROKER_URL=redis://10.0.135.240:6379/0
-CELERY_RESULT_BACKEND=redis://10.0.135.240:6379/0
+REDIS_URL=redis://10.0.132.30:6379/0
+CELERY_BROKER_URL=redis://10.0.132.30:6379/0
+CELERY_RESULT_BACKEND=redis://10.0.132.30:6379/0
 
 # JWT Configuration
-SECRET_KEY=6da78a1c9d50ebc82c4022c07994f21e7618dd73d9fca80fb2ef7f74c42adea2
+SECRET_KEY=0c72c2f9d7347178a3f307e76e3de75dd78fa3a44640869710d9268171a0817f
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
@@ -1142,7 +1306,6 @@ S3_PROCESSED_PREFIX=processed_videos/
 AWS_ACCESS_KEY_ID=a
 AWS_SECRET_ACCESS_KEY=a
 AWS_SESSION_TOKEN=a
-
 
 # Environment
 ENVIRONMENT=production
@@ -1566,10 +1729,162 @@ e) **Aplicación no está escuchando en 0.0.0.0:**
 
 ---
 
+## Scripts de Automatización de Despliegue
+
+El proyecto incluye scripts de automatización para facilitar el despliegue en AWS. Estos scripts se ejecutan automáticamente cuando se lanzan las instancias EC2 (user data scripts).
+
+### Ubicación de Scripts
+
+Todos los scripts de AWS se encuentran en el directorio `scripts/aws/`:
+
+```
+scripts/aws/
+├── backend-user-data.sh    # Script de user data para instancias EC2 del backend
+└── script-redis.sh          # Script de configuración de Redis en EC2
+```
+
+### Scripts Disponibles
+
+#### 1. `backend-user-data.sh`
+
+**Propósito**: Script de user data para instancias EC2 del backend (API)
+
+**Función**: 
+- Instala Docker y Docker Compose
+- Clona el repositorio
+- Crea archivo `.env` con configuración
+- Crea script de inicio (`start-backend.sh`)
+- Configura servicio systemd (`anb-api.service`)
+- Inicia automáticamente la API
+
+**Uso**:
+- Se ejecuta automáticamente cuando se lanza una instancia EC2
+- Se puede usar en Launch Template o User Data de instancia EC2
+- Compatible con Ubuntu y Amazon Linux
+
+**Características**:
+- Detección automática de OS (Ubuntu/Amazon Linux)
+- Instalación de Docker y Docker Compose
+- Configuración automática de systemd service
+- Auto-restart en caso de fallo
+
+**Ubicación en código**: `scripts/aws/backend-user-data.sh`
+
+#### 2. `script-redis.sh`
+
+**Propósito**: Script de configuración de Redis en instancia EC2
+
+**Función**:
+- Instala Redis server
+- Configura Redis para acceso desde VPC
+- Habilita persistencia (AOF)
+- Configura límites de memoria
+- Inicia y habilita servicio Redis
+
+**Uso**:
+- Se ejecuta automáticamente cuando se lanza la instancia EC2 de Redis
+- Se puede usar en User Data de instancia EC2
+- Compatible con Ubuntu
+
+**Características**:
+- Configuración de Redis optimizada para producción
+- Persistencia habilitada (AOF)
+- Límite de memoria configurado (512MB)
+- Threaded I/O habilitado (4 threads)
+
+**Ubicación en código**: `scripts/aws/script-redis.sh`
+
+### Cómo Usar los Scripts
+
+#### Para Backend (Launch Template)
+
+1. **Crear Launch Template**:
+   - Ir a EC2 Dashboard → Launch Templates → Create launch template
+   - En **Advanced details** → **User data**, pegar el contenido de `backend-user-data.sh`
+   - Ajustar valores en el script (URLs de RDS, Redis, S3, credenciales)
+
+2. **Usar en Auto Scaling Group**:
+   - Al crear el ASG, seleccionar el Launch Template
+   - Las instancias se configurarán automáticamente al lanzarse
+
+#### Para Redis (User Data)
+
+1. **Lanzar Instancia EC2**:
+   - Ir a EC2 Dashboard → Launch instance
+   - En **Advanced details** → **User data**, pegar el contenido de `script-redis.sh`
+   - La instancia se configurará automáticamente al iniciar
+
+### Personalización de Scripts
+
+**⚠️ IMPORTANTE**: Antes de usar los scripts, debes personalizar los siguientes valores:
+
+#### En `backend-user-data.sh`:
+- `DATABASE_URL`: Endpoint de RDS
+- `REDIS_URL`: IP privada de instancia Redis
+- `S3_BUCKET_NAME`: Nombre del bucket S3
+- `AWS_ACCESS_KEY_ID`: Credenciales AWS
+- `AWS_SECRET_ACCESS_KEY`: Credenciales AWS
+- `AWS_SESSION_TOKEN`: Token de sesión (si las credenciales son temporales)
+
+#### En `script-redis.sh`:
+- Generalmente no requiere personalización
+- Si necesitas cambiar límites de memoria, edita `maxmemory` en el script
+
+### Ejecución Manual (Troubleshooting)
+
+Si necesitas ejecutar los scripts manualmente:
+
+```bash
+# Conectar a instancia EC2
+ssh -i tu-key.pem ubuntu@<IP_INSTANCIA>
+
+# Para backend
+sudo bash /opt/anb-api/scripts/aws/backend-user-data.sh
+
+# Para Redis
+sudo bash /opt/anb-worker/scripts/aws/script-redis.sh
+```
+
+### Verificación de Scripts
+
+Después de ejecutar los scripts, verifica que todo esté funcionando:
+
+```bash
+# Verificar Docker
+docker ps
+
+# Verificar servicio backend
+sudo systemctl status anb-api
+
+# Verificar Redis
+redis-cli ping
+# Debe responder: PONG
+
+# Ver logs
+sudo journalctl -u anb-api -f
+```
+
+### Notas Importantes
+
+1. **Credenciales**: Nunca commitees credenciales en los scripts. Usa variables de entorno o IAM Roles.
+
+2. **Permisos**: Los scripts requieren permisos de root/sudo para instalar paquetes y configurar servicios.
+
+3. **Red**: Las instancias deben tener acceso a internet para descargar paquetes y clonar el repositorio.
+
+4. **Tiempo de Ejecución**: Los scripts pueden tardar 5-10 minutos en completarse. Verifica los logs si hay problemas.
+
+5. **Repositorio**: Los scripts clonan el repositorio desde GitHub. Asegúrate de que la URL del repositorio sea correcta.
+
+---
+
 ## Recursos Adicionales
 
 - [Documentación AWS RDS](https://docs.aws.amazon.com/rds/)
 - [Documentación AWS EC2](https://docs.aws.amazon.com/ec2/)
 - [Documentación AWS ALB](https://docs.aws.amazon.com/elasticloadbalancing/)
 - [Documentación AWS Auto Scaling](https://docs.aws.amazon.com/autoscaling/)
+- [Documentación AWS S3](https://docs.aws.amazon.com/s3/)
+- [Documentación Docker](https://docs.docker.com/)
+- [Documentación Celery](https://docs.celeryproject.org/)
 
