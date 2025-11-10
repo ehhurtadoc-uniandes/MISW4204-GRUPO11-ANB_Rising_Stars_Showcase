@@ -66,20 +66,20 @@ rm -rf /tmp/anb-api
 echo "Creating .env file..."
 cat > .env << 'EOF'
 # Database (RDS)
-DATABASE_URL=postgresql://anb_user:anb_password@anb-db.c4lgkryqdvqm.us-east-1.rds.amazonaws.com:5432/anbdb
-POSTGRES_HOST=anb-db.c4lgkryqdvqm.us-east-1.rds.amazonaws.com
+DATABASE_URL=postgresql://anb_user:anb_password@anb-db.cqorwictbr3v.us-east-1.rds.amazonaws.com:5432/anbdb
+POSTGRES_HOST=anb-db.cqorwictbr3v.us-east-1.rds.amazonaws.com
 POSTGRES_PORT=5432
 POSTGRES_USER=anb_user
 POSTGRES_PASSWORD=anb_password
 POSTGRES_DB=anbdb
 
 # Redis (EC2 Redis - IP privada)
-REDIS_URL=redis://10.0.135.240:6379/0
-CELERY_BROKER_URL=redis://10.0.135.240:6379/0
-CELERY_RESULT_BACKEND=redis://10.0.135.240:6379/0
+REDIS_URL=redis://10.0.132.30:6379/0
+CELERY_BROKER_URL=redis://10.0.132.30:6379/0
+CELERY_RESULT_BACKEND=redis://10.0.132.30:6379/0
 
 # JWT Configuration
-SECRET_KEY=6da78a1c9d50ebc82c4022c07994f21e7618dd73d9fca80fb2ef7f74c42adea2
+SECRET_KEY=0c72c2f9d7347178a3f307e76e3de75dd78fa3a44640869710d9268171a0817f
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
