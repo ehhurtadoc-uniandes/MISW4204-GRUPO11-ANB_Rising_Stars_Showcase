@@ -457,7 +457,7 @@ docker rm anb-api
 - **[Guía de Despliegue en AWS](docs/Entrega_3/AWS_DEPLOYMENT_GUIDE.md)** - Documentación completa de la arquitectura y despliegue en AWS
 - **[Diagrama de Arquitectura AWS](docs/Entrega_3/Arquitectura.drawio.pdf)** - Diagrama visual de la arquitectura del sistema
 - **[Documento de Pruebas - Entrega 3](capacity-planning/Documento%20de%20Pruebas%20Proyecto%20-%20Entrega%203.pdf)** - Documento completo de pruebas de capacidad y rendimiento
-- **[Documento de Pruebas - Entrega 3 (Google Drive)](https://drive.google.com/file/d/1vCNuaspwqUgJbdzYMtjvBYMzxkj8aJVz/view?usp=sharing)** - Documento completo de pruebas de capacidad y rendimiento (versión en línea)
+- **[Video de Sustentación - Entrega 3](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/EVCUxa-NzfpFqHhbelp9JncBadBKy3sSelYfrgdUvq8WCQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=JNtdTx)** - Video de sustentación de la Entrega 3
 
 ## Licencia
 
