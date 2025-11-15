@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 import os
 import uuid
+import logging
 from app.core.database import get_db
 from app.core.auth import get_current_active_user
 from app.services.video_service import VideoService
@@ -14,8 +15,16 @@ from app.schemas.video import (
 from app.schemas.user import UserResponse
 from app.models.video import VideoStatus
 from app.core.config import settings
-from app.workers.celery_app import celery_app
-from app.core.config import settings
+from app.services.sqs_service import get_sqs_service
+# Legacy Celery support (for backward compatibility)
+try:
+    from app.workers.celery_app import celery_app
+    CELERY_AVAILABLE = True
+except ImportError:
+    CELERY_AVAILABLE = False
+    celery_app = None
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -66,20 +75,36 @@ async def upload_video(
         db, video_data, current_user.id, video_file.filename, file_path
     )
     
-    # Enqueue processing task
-    task = celery_app.send_task(
-        'app.workers.video_processor.process_video_task',
-        args=[str(video.id), file_path],
-        queue='video_queue'
+    # Enqueue processing task using SQS (Entrega 4)
+    sqs_service = get_sqs_service()
+    message_id = sqs_service.send_video_processing_message(
+        video_id=str(video.id),
+        video_path=file_path
     )
     
-    # Update video with task ID
-    video.task_id = task.id
+    if not message_id:
+        # Fallback to Celery if SQS is not configured (backward compatibility)
+        if CELERY_AVAILABLE and celery_app:
+            logger.warning("SQS not configured, falling back to Celery")
+            task = celery_app.send_task(
+                'app.workers.video_processor.process_video_task',
+                args=[str(video.id), file_path],
+                queue='video_queue'
+            )
+            message_id = task.id
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="No se pudo encolar la tarea de procesamiento. Verifique la configuración de SQS."
+            )
+    
+    # Update video with task ID (message_id from SQS or Celery)
+    video.task_id = message_id
     db.commit()
     
     return VideoUploadResponse(
         message="Video subido correctamente. Procesamiento en curso.",
-        task_id=task.id
+        task_id=message_id
     )
 
 

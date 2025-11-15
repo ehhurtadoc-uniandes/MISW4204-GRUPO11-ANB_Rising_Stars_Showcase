@@ -66,20 +66,22 @@ rm -rf /tmp/anb-api
 echo "Creating .env file..."
 cat > .env << 'EOF'
 # Database (RDS)
-DATABASE_URL=postgresql://anb_user:anb_password@anb-db.cqorwictbr3v.us-east-1.rds.amazonaws.com:5432/anbdb
-POSTGRES_HOST=anb-db.cqorwictbr3v.us-east-1.rds.amazonaws.com
+DATABASE_URL=postgresql://anb_admin:REPLACE_WITH_PASSWORD@REPLACE_WITH_RDS_ENDPOINT:5432/anb_db
+POSTGRES_HOST=REPLACE_WITH_RDS_ENDPOINT
 POSTGRES_PORT=5432
-POSTGRES_USER=anb_user
-POSTGRES_PASSWORD=anb_password
-POSTGRES_DB=anbdb
+POSTGRES_USER=anb_admin
+POSTGRES_PASSWORD=REPLACE_WITH_PASSWORD
+POSTGRES_DB=anb_db
 
-# Redis (EC2 Redis - IP privada)
-REDIS_URL=redis://10.0.132.30:6379/0
-CELERY_BROKER_URL=redis://10.0.132.30:6379/0
-CELERY_RESULT_BACKEND=redis://10.0.132.30:6379/0
+# SQS Configuration (Entrega 4)
+SQS_QUEUE_URL=REPLACE_WITH_SQS_QUEUE_URL
+SQS_REGION=us-east-1
+SQS_VISIBILITY_TIMEOUT=300
+SQS_MAX_RECEIVE_COUNT=3
+SQS_WAIT_TIME_SECONDS=20
 
 # JWT Configuration
-SECRET_KEY=0c72c2f9d7347178a3f307e76e3de75dd78fa3a44640869710d9268171a0817f
+SECRET_KEY=REPLACE_WITH_SECRET_KEY
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
@@ -90,13 +92,11 @@ S3_BUCKET_NAME=anb-rising-starts-videos-east1
 S3_UPLOAD_PREFIX=uploads/
 S3_PROCESSED_PREFIX=processed_videos/
 
-# AWS Credentials (solo para escritura - bucket es público para lectura)
-# IMPORTANTE: Reemplazar con tus credenciales reales
-# IMPORTANTE: No commitees estas credenciales al repositorio
-# NOTA: Si las credenciales empiezan con "ASIA", son temporales y requieren AWS_SESSION_TOKEN
-AWS_ACCESS_KEY_ID=a
-AWS_SECRET_ACCESS_KEY=a
-AWS_SESSION_TOKEN=a
+# AWS Credentials (opcional si usas IAM Role - recomendado)
+# Si usas IAM Role en las instancias EC2, no necesitas estas credenciales
+# AWS_ACCESS_KEY_ID=REPLACE_WITH_ACCESS_KEY
+# AWS_SECRET_ACCESS_KEY=REPLACE_WITH_SECRET_KEY
+# AWS_SESSION_TOKEN=REPLACE_WITH_SESSION_TOKEN_IF_TEMPORARY
 
 # Environment
 ENVIRONMENT=production
