@@ -54,44 +54,71 @@ git clone https://github.com/ehhurtadoc-uniandes/MISW4204-GRUPO11-ANB_Rising_Sta
 # Create .env file with SQS configuration
 cat > .env << EOF
 # Database (RDS)
+<<<<<<< HEAD
 DATABASE_URL=postgresql://anb_user:anb_password@anb-db.cmzycdutcfqt.us-east-1.rds.amazonaws.com:5432/anbdb
 POSTGRES_HOST=anb-db.cmzycdutcfqt.us-east-1.rds.amazonaws.com
+=======
+DATABASE_URL=postgresql://anb_user:anb_password@REPLACE_WITH_RDS_ENDPOINT:5432/anbdb
+POSTGRES_HOST=REPLACE_WITH_RDS_ENDPOINT
+>>>>>>> dbebf9ab28b1bd24d092a30f7e9026d3d626b0fc
 POSTGRES_PORT=5432
 POSTGRES_USER=anb_user
 POSTGRES_PASSWORD=anb_password
 POSTGRES_DB=anbdb
 
 # SQS Configuration (Entrega 4)
+<<<<<<< HEAD
 SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/906569879596/anb-video-processing-queue
+=======
+SQS_QUEUE_URL=REPLACE_WITH_SQS_QUEUE_URL
+>>>>>>> dbebf9ab28b1bd24d092a30f7e9026d3d626b0fc
 SQS_REGION=us-east-1
 SQS_VISIBILITY_TIMEOUT=300
 SQS_MAX_RECEIVE_COUNT=3
 SQS_WAIT_TIME_SECONDS=20
 
 # JWT Configuration
+<<<<<<< HEAD
 SECRET_KEY=1cbaf2c31556651ef478e2067555263f33d8d0b359ff990b19c3d3351c620003
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 # S3 Storage (bucket público para lectura)
+=======
+SECRET_KEY=REPLACE_WITH_SECRET_KEY
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# S3 Storage
+>>>>>>> dbebf9ab28b1bd24d092a30f7e9026d3d626b0fc
 STORAGE_TYPE=cloud
 AWS_REGION=us-east-1
 S3_BUCKET_NAME=anb-rising-starts-videos-east1
 S3_UPLOAD_PREFIX=uploads/
 S3_PROCESSED_PREFIX=processed_videos/
 
+<<<<<<< HEAD
 # AWS Credentials
 # IMPORTANTE: NO incluir credenciales aquí. Usar IAM Roles en las instancias EC2.
 # Si necesitas credenciales temporales, configúralas manualmente en la instancia o usa AWS Systems Manager Parameter Store.
 # AWS_ACCESS_KEY_ID=
 # AWS_SECRET_ACCESS_KEY=
 # AWS_SESSION_TOKEN=
+=======
+# AWS Credentials (or use IAM Role)
+AWS_ACCESS_KEY_ID=REPLACE_WITH_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY=REPLACE_WITH_SECRET_KEY
+>>>>>>> dbebf9ab28b1bd24d092a30f7e9026d3d626b0fc
 
 # Environment
 ENVIRONMENT=production
 DEBUG=False
 
+<<<<<<< HEAD
 # File Storage (fallback local)
+=======
+# File Storage
+>>>>>>> dbebf9ab28b1bd24d092a30f7e9026d3d626b0fc
 UPLOAD_DIR=/app/uploads
 PROCESSED_DIR=/app/processed_videos
 MAX_FILE_SIZE_MB=100

@@ -17,6 +17,7 @@ class SQSService:
     
     def __init__(self):
         """Initialize SQS client"""
+<<<<<<< HEAD
         # Build client config - only pass credentials if they're explicitly set
         # Otherwise, let boto3 use IAM Role automatically
         client_config = {
@@ -32,6 +33,14 @@ class SQSService:
                 client_config['aws_session_token'] = settings.aws_session_token
         
         self.sqs_client = boto3.client('sqs', **client_config)
+=======
+        self.sqs_client = boto3.client(
+            'sqs',
+            region_name=settings.sqs_region,
+            aws_access_key_id=settings.aws_access_key_id if settings.aws_access_key_id else None,
+            aws_secret_access_key=settings.aws_secret_access_key if settings.aws_secret_access_key else None
+        )
+>>>>>>> dbebf9ab28b1bd24d092a30f7e9026d3d626b0fc
         self.queue_url = settings.sqs_queue_url
     
     def send_video_processing_message(
