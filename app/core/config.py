@@ -48,11 +48,19 @@ class Settings(BaseSettings):
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
     
-    # Celery Configuration
+    # Celery Configuration (Legacy - being replaced by SQS)
     # Default: Local development (Docker Compose service name "redis")
     # Production: Overridden by .env with EC2 Redis private IP
     celery_broker_url: str = "redis://redis:6379/0"
     celery_result_backend: str = "redis://redis:6379/0"
+    
+    # SQS Configuration (New - Entrega 4)
+    # Production: Overridden by .env with actual SQS queue URL
+    sqs_queue_url: str = ""
+    sqs_region: str = "us-east-1"
+    sqs_visibility_timeout: int = 300  # 5 minutes
+    sqs_max_receive_count: int = 3  # Max retries before DLQ
+    sqs_wait_time_seconds: int = 20  # Long polling wait time
     
     # Environment
     # Production: Overridden by .env (ENVIRONMENT=production, DEBUG=False)
