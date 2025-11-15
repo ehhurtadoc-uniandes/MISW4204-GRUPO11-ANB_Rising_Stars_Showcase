@@ -467,8 +467,15 @@ Ahora que tienes todos los security groups creados, actualiza `anb-rds-sg`:
 
 ### Paso 5: IAM Roles y Políticas
 
+**⚠️ IMPORTANTE: Si no puedes crear IAM Roles** (cuenta de estudiante con permisos restringidos):
+
+1. **Solicita al administrador** que cree los roles `anb-backend-role` y `anb-worker-role` con las políticas especificadas abajo
+2. **Solución temporal**: Usa credenciales AWS en el `.env` (ver sección [Solución Temporal: Usar Credenciales](#solución-temporal-usar-credenciales) al final)
+3. **Documenta la restricción** en tu entrega
+
 #### 5.1 Crear IAM Role para Backend
 
+**Si tienes permisos:**
 1. **IAM Dashboard** → **Roles** → **Create role**
 2. **Trusted entity type**: AWS service
 3. **Service**: EC2
@@ -558,6 +565,14 @@ Ahora que tienes todos los security groups creados, actualiza `anb-rds-sg`:
 7. Volver a crear role, seleccionar la política `anb-worker-policy`
 8. **Role name**: `anb-worker-role`
 9. Click **Create role**
+
+**Si NO tienes permisos para crear roles:**
+
+Solicita al administrador que cree el rol `anb-worker-role` con:
+- **Trusted entity**: EC2
+- **Policies**: Usar el JSON de arriba (líneas 519-553)
+
+**Mientras tanto**, puedes usar credenciales temporales en el `.env` del worker (ver sección [Solución Temporal: Usar Credenciales](#solución-temporal-usar-credenciales)).
 
 ---
 
@@ -902,11 +917,91 @@ curl http://localhost:8000/docs
      - **Desired capacity**: 2
      - **Minimum capacity**: 2
      - **Maximum capacity**: 5
-   - **Scaling policies**:
-     - **Target tracking scaling policy**:
-       - **Metric type**: Average CPU utilization
-       - **Target value**: 70%
+   - **Scaling policies**: Se configurarán después (ver Paso 8.3)
 3. Click **Create Auto Scaling group**
+
+#### 8.3 Configurar Políticas de Escalamiento para Backend
+
+**Opción 1: Target Tracking con RequestCountPerTarget (RECOMENDADO)**
+
+Esta métrica es mejor que CPU porque escala basado en la carga real de requests por instancia.
+
+1. En el ASG `anb-backend-asg` → **Dynamic scaling policies** → **Create dynamic scaling policy**
+2. Configuración:
+   - **Policy type**: `Target tracking scaling`
+   - **Scaling policy name**: `alb-request-count-tracking`
+   - **Metric type**: `Custom CloudWatch metric`
+   
+3. **Configurar el JSON de métrica personalizada:**
+   
+   ```json
+   {
+     "CustomizedMetricSpecification": {
+       "MetricName": "RequestCountPerTarget",
+       "Namespace": "AWS/ApplicationELB",
+       "Statistic": "Average",
+       "Dimensions": [
+         {
+           "Name": "TargetGroup",
+           "Value": "targetgroup/anb-backend-tg/XXXXX"
+         },
+         {
+           "Name": "LoadBalancer",
+           "Value": "app/anb-alb/XXXXX"
+         }
+       ]
+     }
+   }
+   ```
+   
+   **Nota**: Reemplaza `XXXXX` con los IDs reales de tu Target Group y Load Balancer. Puedes encontrarlos en:
+   - **Target Group**: EC2 → Target Groups → `anb-backend-tg` → Copiar el ARN completo
+   - **Load Balancer**: EC2 → Load Balancers → `anb-alb` → Copiar el ARN completo
+   
+   O usa solo el nombre del Target Group si prefieres:
+   
+   ```json
+   {
+     "CustomizedMetricSpecification": {
+       "MetricName": "RequestCountPerTarget",
+       "Namespace": "AWS/ApplicationELB",
+       "Statistic": "Average",
+       "Dimensions": [
+         {
+           "Name": "TargetGroup",
+           "Value": "targetgroup/anb-backend-tg/XXXXX"
+         }
+       ]
+     }
+   }
+   ```
+
+4. **Target value**: `100` requests por minuto por instancia
+   - Esto significa que Auto Scaling intentará mantener aproximadamente 100 requests/minuto por instancia
+   - Si hay más requests por instancia, escalará hacia arriba
+   - Si hay menos requests por instancia, escalará hacia abajo
+
+5. **Instance warm-up**: `300` segundos (5 minutos)
+
+6. Click **Create**
+
+**Opción 2: Target Tracking con CPU (Alternativa más simple)**
+
+Si prefieres usar CPU (más simple pero menos preciso):
+
+1. **Policy type**: `Target tracking scaling`
+2. **Metric type**: `Average CPU utilization`
+3. **Target value**: `70%`
+4. Click **Create**
+
+**Opción 3: Step Scaling con CloudWatch Alarms**
+
+Similar a como configuraste los workers, puedes crear alarms basados en:
+- `RequestCount` del ALB (total de requests)
+- `TargetResponseTime` (tiempo de respuesta)
+- `HTTPCode_Target_5XX_Count` (errores)
+
+Y crear políticas de Step Scaling que respondan a estos alarms.
 
 ---
 
@@ -1041,14 +1136,87 @@ docker logs anb-worker-sqs
 
 1. En el ASG → **Dynamic scaling policies** → **Create dynamic scaling policy**
 2. Configuración:
-   - **Policy type**: Target tracking
-   - **Metric type**: Custom metric
-   - **Metric name**: `ApproximateNumberOfMessagesVisible`
-   - **Namespace**: `AWS/SQS`
-   - **Queue name**: `anb-video-processing-queue`
-   - **Target value**: 10 (mensajes por worker)
-   - **Scale-out cooldown**: 60 segundos
-   - **Scale-in cooldown**: 300 segundos
+   - **Policy type**: `Target tracking scaling` (Escalado de seguimiento de destino)
+   - **Scaling policy name**: `sqs-queue-depth-tracking` (o el nombre que prefieras)
+   - **Metric type**: `Custom CloudWatch metric` (Métrica personalizada de CloudWatch)
+   
+3. **Configurar el JSON de métrica personalizada:**
+   
+   En el campo **"JSON de métrica personalizada"** (Custom metric JSON), reemplaza el contenido con este JSON:
+   
+   ```json
+   {
+     "CustomizedMetricSpecification": {
+       "MetricName": "ApproximateNumberOfMessagesVisible",
+       "Namespace": "AWS/SQS",
+       "Statistic": "Average",
+       "Dimensions": [
+         {
+           "Name": "QueueName",
+           "Value": "anb-video-processing-queue"
+         }
+       ]
+     }
+   }
+   ```
+   
+   **Explicación de los campos:**
+   - `MetricName`: `ApproximateNumberOfMessagesVisible` - Número de mensajes visibles en la cola
+   - `Namespace`: `AWS/SQS` - Namespace de CloudWatch para SQS
+   - `Statistic`: `Average` - Usar el promedio de mensajes
+   - `Dimensions`: Especifica la cola SQS por nombre
+     - `Name`: `QueueName` - Nombre de la dimensión
+     - `Value`: `anb-video-processing-queue` - Nombre de tu cola SQS
+
+4. **Configurar el valor de destino:**
+   - **Target value**: `10`
+     - Esto significa que Auto Scaling intentará mantener aproximadamente 10 mensajes visibles por instancia worker
+     - Si hay más de 10 mensajes por instancia, escalará hacia arriba
+     - Si hay menos de 10 mensajes por instancia, escalará hacia abajo
+
+5. **Configurar tiempos de preparación:**
+   - **Instance warm-up** (Preparación de la instancia): `300` segundos (5 minutos)
+     - Tiempo que espera antes de considerar que una nueva instancia está lista
+
+6. Click **Create** (Crear)
+
+**Nota**: Si tu cola SQS está en una región diferente o necesitas usar el ARN completo, puedes usar esta alternativa en el JSON:
+
+```json
+{
+  "CustomizedMetricSpecification": {
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Statistic": "Average",
+    "Dimensions": [
+      {
+        "Name": "QueueName",
+        "Value": "anb-video-processing-queue"
+      }
+    ]
+  }
+}
+```
+
+Si necesitas usar el ARN completo de la cola, puedes usar:
+
+```json
+{
+  "CustomizedMetricSpecification": {
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Statistic": "Average",
+    "Dimensions": [
+      {
+        "Name": "QueueName",
+        "Value": "arn:aws:sqs:us-east-1:ACCOUNT_ID:anb-video-processing-queue"
+      }
+    ]
+  }
+}
+```
+
+**Recomendación**: Usa solo el nombre de la cola (`anb-video-processing-queue`) en la mayoría de los casos, ya que AWS lo resuelve automáticamente.
 
 **Alternativa: Step Scaling**:
 
@@ -1065,19 +1233,125 @@ docker logs anb-worker-sqs
 
 #### 12.1 Crear CloudWatch Alarms para Auto Scaling
 
+**Alarm para Scale-Out** (Escalar hacia arriba):
+
 1. **CloudWatch Dashboard** → **Alarms** → **Create alarm**
-2. **Alarm para Scale-Out**:
-   - **Name**: `anb-worker-scale-up`
-   - **Metric**: SQS → `ApproximateNumberOfMessagesVisible`
-   - **Queue**: `anb-video-processing-queue`
-   - **Condition**: Greater than 20
-   - **Action**: Auto Scaling → Add 1 instance to `anb-worker-asg`
-3. **Alarm para Scale-In**:
-   - **Name**: `anb-worker-scale-down`
-   - **Metric**: SQS → `ApproximateNumberOfMessagesVisible`
-   - **Queue**: `anb-video-processing-queue`
-   - **Condition**: Less than 5
-   - **Action**: Auto Scaling → Remove 1 instance from `anb-worker-asg`
+
+2. **Paso 1: Seleccionar la métrica**
+   - Click en el botón azul **"Seleccione una métrica"** (Select a metric)
+   - En la página de selección de métricas, busca en el panel izquierdo:
+     - **"All metrics"** (Todas las métricas) o **"Browse"** (Explorar)
+   - En la lista de servicios, busca y haz click en **"SQS"** (Simple Queue Service)
+   - Dentro de SQS, verás diferentes métricas. Busca y selecciona:
+     - **"Queue Metrics"** (Métricas de cola)
+     - O directamente busca la métrica: **"ApproximateNumberOfMessagesVisible"**
+   - En la lista de colas, verás varias opciones. **IMPORTANTE**: Selecciona SOLO esta métrica:
+     - ✅ **`anb-video-processing-queue`** con métrica **`ApproximateNumberOfMessagesVisible`**
+     - ❌ **NO** selecciones `ApproximateNumberOfMessagesVisibleInQuietGroups` (esta es diferente)
+   - Haz click en la fila que corresponde a `anb-video-processing-queue` → `ApproximateNumberOfMessagesVisible`
+   - Verás que se marca con un check (✓) y se resalta en azul
+   - Haz click en **"Seleccionar una métrica"** (Select a metric) en la parte inferior derecha
+   
+   **Diferencia entre las métricas:**
+   - `ApproximateNumberOfMessagesVisible`: Número total de mensajes visibles en la cola ✅ **USA ESTA**
+   - `ApproximateNumberOfMessagesVisibleInQuietGroups`: Solo mensajes en grupos "quiet" ❌ No usar para auto-scaling
+
+3. **Paso 1 (continuación): Configurar la condición**
+   - Una vez seleccionada la métrica, verás un gráfico de la métrica
+   - En la sección **"Conditions"** (Condiciones) o **"Whenever"** (Siempre que):
+     - **"is"**: Seleccionar **"Greater"** (Mayor que) o **">"**
+     - **"than"**: Ingresar `20`
+     - **"for"**: `1` datapoint(s) out of `1`
+     - Esto significa: "Cuando el número de mensajes visibles sea mayor que 20"
+
+4. **Paso 2: Configurar la acción**
+   
+   a. **Activador de estado de alarma** (Alarm state trigger):
+      - Debe estar seleccionado **"En modo alarma"** (In alarm state) ✅
+      - Esto significa que la acción se ejecutará cuando el alarm entre en estado de alarma
+   
+   b. **Agregar acción de Auto Scaling:**
+      - Haz click en el botón azul **"Agregar acción de Auto Scaling"** (Add Auto Scaling action)
+      - Se abrirá un formulario o modal para configurar la acción
+   
+   c. **Configurar la acción de Auto Scaling:**
+      
+      **Paso 1: Seleccionar el grupo**
+      - **"Tipo de recurso"** (Resource type): Debe estar seleccionado **"Grupo de EC2 Auto Scaling"** ✅
+      - **"Seleccione un grupo"** (Select a group): 
+        - Abre el dropdown y selecciona `anb-worker-asg`
+        - Si no aparece, usa el buscador para encontrarlo
+      
+      **Paso 2: Seleccionar la acción**
+      - **"Realice la siguiente acción..."** (Perform the following action...):
+        - Abre el dropdown **"Seleccione una acción"** (Select an action)
+        - **⚠️ PROBLEMA COMÚN**: Si el dropdown está vacío o dice "Solo están disponibles las acciones del grupo de Auto Scaling seleccionado", significa que el ASG no tiene políticas de escalado configuradas
+      
+      **Solución si no aparecen acciones:**
+      
+      **Opción A: Crear una política de Step Scaling primero (RECOMENDADO)**
+      1. Ve a **EC2 Console** → **Auto Scaling Groups** → Selecciona `anb-worker-asg`
+      2. Ve a la pestaña **"Dynamic scaling policies"** (Políticas de escalado dinámico)
+      3. Click en **"Create dynamic scaling policy"**
+      4. Configura:
+         - **Policy type**: `Step scaling`
+         - **Policy name**: `scale-up-policy`
+         - **Alarm**: Selecciona el alarm que estás creando (o créalo después y vuelve)
+         - **Scaling adjustments**:
+           - **When**: `Greater than 20`
+           - **Then**: `Add 1 capacity unit` (o `Add 1 instance`)
+      5. Guarda la política
+      6. Vuelve a CloudWatch y ahora deberías ver la política en el dropdown
+      
+      **Opción B: Usar Target Tracking (MÁS SIMPLE - ya lo configuraste en Paso 11.2)**
+      - Si ya configuraste Target Tracking en el Paso 11.2, **NO necesitas crear estos alarms manualmente**
+      - Target Tracking crea automáticamente los alarms necesarios
+      - Puedes saltarte este paso y usar solo Target Tracking
+      
+      **Opción C: Crear política simple desde CloudWatch**
+      - Si el dropdown sigue vacío, puedes intentar crear una política directamente desde aquí
+      - Busca un botón como **"Create scaling policy"** o **"Crear política de escalado"**
+      - O simplemente continúa sin seleccionar una acción y AWS creará una política simple automáticamente
+   
+   d. **Guardar la acción:**
+      - Haz click en **"Add"** (Agregar) o **"Save"** (Guardar) para confirmar la acción
+   
+   **Nota**: No necesitas configurar notificaciones SNS para que funcione el auto-scaling, pero puedes agregarlas si quieres recibir emails cuando se escale.
+
+5. **Paso 3: Agregar detalles**
+   - **Alarm name**: `anb-worker-scale-up`
+   - **Alarm description**: `Scale up workers when queue depth > 20 messages`
+   - Click **"Next"** (Siguiente)
+
+6. **Paso 4: Revisar y crear**
+   - Revisa la configuración
+   - Click **"Create alarm"** (Crear alarma)
+
+**Alarm para Scale-In** (Escalar hacia abajo):
+
+1. Repite los pasos anteriores, pero con estas diferencias:
+
+2. **Métrica**: La misma (`ApproximateNumberOfMessagesVisible` de `anb-video-processing-queue`)
+
+3. **Condición**:
+   - **"is"**: Seleccionar **"Less"** (Menor que) o **"<"**
+   - **"than"**: Ingresar `5`
+   - Esto significa: "Cuando el número de mensajes visibles sea menor que 5"
+
+4. **Acción**:
+   - **Auto Scaling group**: `anb-worker-asg`
+   - **"Remove capacity"**: `1` instance
+   - **"When alarm triggers"**: `Remove 1 instance`
+
+5. **Alarm name**: `anb-worker-scale-down`
+6. **Alarm description**: `Scale down workers when queue depth < 5 messages`
+
+**Nota**: Si no encuentras la métrica de SQS:
+- Asegúrate de que la cola SQS ya esté creada y haya tenido actividad
+- Las métricas de SQS pueden tardar unos minutos en aparecer después de crear la cola
+- Si no aparece, intenta buscar directamente por el nombre de la cola en el buscador de métricas
+
+**Alternativa rápida**: Si ya tienes una política de Target Tracking configurada (Paso 11.2), los alarms se crean automáticamente y no necesitas crear estos alarms manualmente. Los alarms manuales son útiles si usas Step Scaling en lugar de Target Tracking.
 
 #### 12.2 Crear Dashboard de CloudWatch
 
@@ -1374,3 +1648,69 @@ En tu documentación de entrega, incluye:
 2. Has implementado el código correctamente
 3. Has solicitado los recursos necesarios
 4. Sabes cómo se implementaría en producción
+
+---
+
+## Solución Temporal: Usar Credenciales
+
+Si no puedes crear IAM Roles y necesitas que el sistema funcione **ahora mismo**, puedes usar credenciales AWS temporales en el `.env`:
+
+### ⚠️ ADVERTENCIA DE SEGURIDAD
+
+- **NO es recomendado para producción**
+- Las credenciales temporales expiran (típicamente 1 hora)
+- Debes renovarlas manualmente
+- **Solo para desarrollo/pruebas**
+
+### Cómo Obtener Credenciales Temporales
+
+1. **Desde la consola de AWS:**
+   - Click en tu nombre de usuario (arriba derecha)
+   - **"Command line or programmatic access"**
+   - Copia los valores de `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, y `AWS_SESSION_TOKEN`
+
+2. **O desde AWS CLI:**
+   ```bash
+   aws sts get-session-token
+   ```
+
+### Configurar en el Worker
+
+En `scripts/aws/worker-sqs-user-data.sh`, descomenta y actualiza las credenciales:
+
+```bash
+# AWS Credentials (TEMPORAL - solo si no puedes usar IAM Role)
+AWS_ACCESS_KEY_ID=TU_ACCESS_KEY_AQUI
+AWS_SECRET_ACCESS_KEY=TU_SECRET_KEY_AQUI
+AWS_SESSION_TOKEN=TU_SESSION_TOKEN_AQUI
+```
+
+**Nota**: El código ya está preparado para usar credenciales si están disponibles, o IAM Role si no hay credenciales (ver `app/services/sqs_service.py`).
+
+### Configurar en el Backend
+
+En `scripts/aws/backend-user-data.sh`, descomenta y actualiza las credenciales de la misma manera.
+
+### Renovar Credenciales
+
+Las credenciales temporales expiran. Cuando expiren:
+1. Obtén nuevas credenciales
+2. Actualiza el `.env` en las instancias
+3. Reinicia los servicios:
+   ```bash
+   # En el worker
+   sudo systemctl restart anb-worker-sqs
+   
+   # En el backend
+   sudo systemctl restart anb-api
+   ```
+
+### Solicitar IAM Roles al Administrador
+
+Mientras usas credenciales temporales, **solicita al administrador** que cree los roles IAM. Una vez creados:
+
+1. Asigna el IAM Role a las instancias EC2
+2. Elimina las credenciales del `.env`
+3. Reinicia los servicios
+
+El código detectará automáticamente que no hay credenciales y usará el IAM Role.

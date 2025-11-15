@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     # Production: Overridden by .env with actual AWS credentials
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
+    aws_session_token: str = ""  # Required for temporary credentials (STS)
     
     # Celery Configuration (Legacy - being replaced by SQS)
     # Default: Local development (Docker Compose service name "redis")
