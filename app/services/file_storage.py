@@ -108,13 +108,9 @@ class S3FileStorage(FileStorageInterface):
             client_kwargs['aws_access_key_id'] = settings.aws_access_key_id
             client_kwargs['aws_secret_access_key'] = settings.aws_secret_access_key
             # Session token is required for temporary credentials (STS)
-            # Get it directly from environment if available
-            aws_session_token = os.getenv('AWS_SESSION_TOKEN')
-            if aws_session_token:
-                client_kwargs['aws_session_token'] = aws_session_token
-                logger.info(f"S3 client created with session token (length: {len(aws_session_token)})")
-            else:
-                logger.warning("S3 client created without session token (AWS_SESSION_TOKEN not found in environment)")
+            if settings.aws_session_token:
+                client_kwargs['aws_session_token'] = settings.aws_session_token
+                logger.info(f"S3 client created with session token (length: {len(settings.aws_session_token)})")
         
         self.s3_client = boto3.client('s3', **client_kwargs)
         self.bucket_name = settings.s3_bucket_name
@@ -219,14 +215,13 @@ class S3FileStorage(FileStorageInterface):
             
             # Recreate S3 client with current session token if available (for temporary credentials)
             # This ensures we always use the latest session token
-            aws_session_token = os.getenv('AWS_SESSION_TOKEN')
-            if aws_session_token and settings.aws_access_key_id and settings.aws_secret_access_key:
-                logger.info(f"Recreating S3 client with session token (length: {len(aws_session_token)})")
+            if settings.aws_session_token and settings.aws_access_key_id and settings.aws_secret_access_key:
+                logger.info(f"Recreating S3 client with session token (length: {len(settings.aws_session_token)})")
                 client_kwargs = {
                     'region_name': settings.aws_region,
                     'aws_access_key_id': settings.aws_access_key_id,
                     'aws_secret_access_key': settings.aws_secret_access_key,
-                    'aws_session_token': aws_session_token
+                    'aws_session_token': settings.aws_session_token
                 }
                 s3_client = boto3.client('s3', **client_kwargs)
                 logger.info("S3 client recreated with session token")
