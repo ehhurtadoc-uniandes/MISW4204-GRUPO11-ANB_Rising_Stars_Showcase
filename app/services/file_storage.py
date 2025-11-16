@@ -200,10 +200,20 @@ class S3FileStorage(FileStorageInterface):
     def download_file(self, s3_path: str, local_path: str) -> bool:
         """Download file from S3 to local path"""
         try:
-            # Extract key from S3 path
+            # Extract key from S3 path (more robust extraction)
             if s3_path.startswith('s3://'):
-                # Remove s3://bucket/ prefix
-                key = s3_path.replace(f's3://{self.bucket_name}/', '')
+                # Parse s3://bucket/key format
+                # Remove s3:// prefix
+                path_without_prefix = s3_path[5:]  # Remove 's3://'
+                # Find first '/' to separate bucket from key
+                first_slash = path_without_prefix.find('/')
+                if first_slash != -1:
+                    # Extract key (everything after bucket/)
+                    key = path_without_prefix[first_slash + 1:]
+                else:
+                    # No slash found, entire path is bucket (shouldn't happen)
+                    logger.error(f"Invalid S3 path format: {s3_path}")
+                    return False
             else:
                 # Assume it's just the key
                 key = s3_path
