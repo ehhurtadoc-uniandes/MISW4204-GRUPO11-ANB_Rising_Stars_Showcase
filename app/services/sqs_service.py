@@ -33,11 +33,26 @@ class SQSService:
         
         # Only add credentials if they're configured (for cases without IAM Role)
         if current_settings.aws_access_key_id and current_settings.aws_secret_access_key:
-            client_config['aws_access_key_id'] = current_settings.aws_access_key_id
-            client_config['aws_secret_access_key'] = current_settings.aws_secret_access_key
+            # Clean credentials: strip whitespace and newlines that might cause signature errors
+            access_key = current_settings.aws_access_key_id.strip()
+            secret_key = current_settings.aws_secret_access_key.strip()
+            session_token = current_settings.aws_session_token.strip() if current_settings.aws_session_token else None
+            
+            # Validate credentials format
+            if not access_key or not secret_key:
+                logger.error("AWS credentials are empty after cleaning. Check your .env file.")
+                raise ValueError("Invalid AWS credentials: access key or secret key is empty")
+            
+            # Log credential info (without exposing values)
+            logger.debug(f"Using AWS credentials: Access Key ID starts with {access_key[:4]}..., "
+                        f"Secret Key length: {len(secret_key)}, "
+                        f"Session Token: {'present' if session_token else 'not present'}")
+            
+            client_config['aws_access_key_id'] = access_key
+            client_config['aws_secret_access_key'] = secret_key
             # Session token is required for temporary credentials (STS)
-            if current_settings.aws_session_token:
-                client_config['aws_session_token'] = current_settings.aws_session_token
+            if session_token:
+                client_config['aws_session_token'] = session_token
         
         self.sqs_client = boto3.client('sqs', **client_config)
         logger.debug("SQS client created/recreated")
@@ -53,19 +68,29 @@ class SQSService:
         if isinstance(error, ClientError):
             error_code = error.response.get('Error', {}).get('Code', '')
         
-        # Check for credential expiration errors
+        # Check for credential expiration and signature errors
         credential_errors = [
             'InvalidClientTokenId',
             'InvalidUserID.NotFound',
             'ExpiredToken',
-            'TokenRefreshRequired'
+            'TokenRefreshRequired',
+            'SignatureDoesNotMatch',  # Can be caused by malformed credentials
+            'InvalidSignatureException'
         ]
         
-        if error_code in credential_errors or 'token' in str(error).lower() or 'credential' in str(error).lower():
-            logger.warning(f"Detected credential error ({error_code}), attempting to recreate client...")
-            logger.warning("NOTE: If credentials have expired, you need to:")
-            logger.warning("1. Update the .env file on the EC2 instance with new credentials")
-            logger.warning("2. Restart the worker container: docker restart anb-worker-sqs")
+        if error_code in credential_errors or 'token' in str(error).lower() or 'credential' in str(error).lower() or 'signature' in str(error).lower():
+            logger.warning(f"Detected credential/signature error ({error_code}), attempting to recreate client...")
+            
+            if error_code == 'SignatureDoesNotMatch':
+                logger.error("SignatureDoesNotMatch error detected. This usually means:")
+                logger.error("1. Credentials have spaces, newlines, or special characters")
+                logger.error("2. Session token is truncated or malformed")
+                logger.error("3. Credentials are incorrect or expired")
+                logger.error("SOLUTION: Use the update-worker-credentials.sh script to update credentials properly")
+            else:
+                logger.warning("NOTE: If credentials have expired, you need to:")
+                logger.warning("1. Update the .env file on the EC2 instance with new credentials")
+                logger.warning("2. Restart the worker container: docker restart anb-worker-sqs")
             try:
                 # Try to reload settings from .env file
                 # Pydantic Settings should automatically reload if the file changed

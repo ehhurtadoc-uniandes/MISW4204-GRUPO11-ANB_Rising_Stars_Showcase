@@ -45,9 +45,21 @@ class Settings(BaseSettings):
     
     # AWS Credentials (required if not using IAM roles)
     # Production: Overridden by .env with actual AWS credentials
+    # Note: Values are automatically stripped of whitespace to prevent SignatureDoesNotMatch errors
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
     aws_session_token: str = ""  # Required for temporary credentials (STS)
+    
+    def model_post_init(self, __context):
+        """Clean credentials after loading to prevent signature errors"""
+        # Strip whitespace from credentials to prevent SignatureDoesNotMatch errors
+        # This can happen if .env file has trailing spaces or newlines
+        if self.aws_access_key_id:
+            self.aws_access_key_id = self.aws_access_key_id.strip()
+        if self.aws_secret_access_key:
+            self.aws_secret_access_key = self.aws_secret_access_key.strip()
+        if self.aws_session_token:
+            self.aws_session_token = self.aws_session_token.strip()
     
     # Celery Configuration (Legacy - being replaced by SQS)
     # Default: Local development (Docker Compose service name "redis")

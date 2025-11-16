@@ -34,13 +34,28 @@ echo "Updating AWS credentials in $ENV_FILE..."
 # Backup original file
 cp "$ENV_FILE" "${ENV_FILE}.backup.$(date +%Y%m%d_%H%M%S)"
 
-# Update credentials using sed
-sed -i "s/^AWS_ACCESS_KEY_ID=.*/AWS_ACCESS_KEY_ID=$ACCESS_KEY/" "$ENV_FILE"
-sed -i "s/^AWS_SECRET_ACCESS_KEY=.*/AWS_SECRET_ACCESS_KEY=$SECRET_KEY/" "$ENV_FILE"
+# Clean credentials: remove any whitespace/newlines
+ACCESS_KEY=$(echo "$ACCESS_KEY" | tr -d '[:space:]')
+SECRET_KEY=$(echo "$SECRET_KEY" | tr -d '[:space:]')
+if [ -n "$SESSION_TOKEN" ]; then
+    SESSION_TOKEN=$(echo "$SESSION_TOKEN" | tr -d '[:space:]')
+fi
+
+# Validate credentials format
+if [ -z "$ACCESS_KEY" ] || [ -z "$SECRET_KEY" ]; then
+    echo "Error: Access Key ID or Secret Access Key is empty after cleaning"
+    exit 1
+fi
+
+# Update credentials using sed with proper escaping
+# Use a different delimiter (|) to avoid issues with special characters in credentials
+sed -i "s|^AWS_ACCESS_KEY_ID=.*|AWS_ACCESS_KEY_ID=$ACCESS_KEY|" "$ENV_FILE"
+sed -i "s|^AWS_SECRET_ACCESS_KEY=.*|AWS_SECRET_ACCESS_KEY=$SECRET_KEY|" "$ENV_FILE"
 
 if [ -n "$SESSION_TOKEN" ]; then
     # Update or add session token
     if grep -q "^AWS_SESSION_TOKEN=" "$ENV_FILE"; then
+        # Use | as delimiter to avoid issues with / in session token
         sed -i "s|^AWS_SESSION_TOKEN=.*|AWS_SESSION_TOKEN=$SESSION_TOKEN|" "$ENV_FILE"
     else
         # Add session token after AWS_SECRET_ACCESS_KEY
@@ -49,6 +64,30 @@ if [ -n "$SESSION_TOKEN" ]; then
 else
     # Remove session token if not provided (for permanent credentials)
     sed -i "/^AWS_SESSION_TOKEN=/d" "$ENV_FILE"
+fi
+
+# Verify the update
+echo ""
+echo "Verifying credentials in .env file..."
+if grep -q "^AWS_ACCESS_KEY_ID=$ACCESS_KEY" "$ENV_FILE"; then
+    echo "✓ AWS_ACCESS_KEY_ID updated successfully"
+else
+    echo "✗ Warning: AWS_ACCESS_KEY_ID may not have been updated correctly"
+fi
+
+if grep -q "^AWS_SECRET_ACCESS_KEY=$SECRET_KEY" "$ENV_FILE"; then
+    echo "✓ AWS_SECRET_ACCESS_KEY updated successfully"
+else
+    echo "✗ Warning: AWS_SECRET_ACCESS_KEY may not have been updated correctly"
+fi
+
+if [ -n "$SESSION_TOKEN" ]; then
+    if grep -q "^AWS_SESSION_TOKEN=$SESSION_TOKEN" "$ENV_FILE"; then
+        echo "✓ AWS_SESSION_TOKEN updated successfully"
+    else
+        echo "✗ Warning: AWS_SESSION_TOKEN may not have been updated correctly"
+        echo "  Session token is very long. Check the file manually if needed."
+    fi
 fi
 
 echo "Credentials updated successfully!"
