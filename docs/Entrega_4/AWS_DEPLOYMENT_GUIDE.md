@@ -1693,17 +1693,61 @@ En `scripts/aws/backend-user-data.sh`, descomenta y actualiza las credenciales d
 
 ### Renovar Credenciales
 
-Las credenciales temporales expiran. Cuando expiren:
-1. Obtén nuevas credenciales
-2. Actualiza el `.env` en las instancias
-3. Reinicia los servicios:
+Las credenciales temporales expiran (típicamente después de 1 hora). Cuando expiren:
+
+#### Opción 1: Script Helper (Recomendado)
+
+El proyecto incluye un script helper para actualizar credenciales fácilmente:
+
+```bash
+# En la instancia EC2 del worker
+cd /opt/anb-worker
+sudo ./scripts/aws/update-worker-credentials.sh \
+  ASIA5GE6GSAWJ3OEGRON \
+  tqUUtKrCMTluoy0hJwaIAUeVsfcp3Cy2uJhwfpS1 \
+  IQoJb3JpZ2luX2VjEK7...
+```
+
+Luego reinicia el contenedor:
+```bash
+sudo docker restart anb-worker-sqs
+```
+
+#### Opción 2: Manual
+
+1. **Obtén nuevas credenciales** desde la consola de AWS
+2. **Edita el `.env`** en la instancia:
+   ```bash
+   sudo nano /opt/anb-worker/.env
+   ```
+3. **Actualiza las líneas:**
+   ```bash
+   AWS_ACCESS_KEY_ID=nueva_access_key
+   AWS_SECRET_ACCESS_KEY=nueva_secret_key
+   AWS_SESSION_TOKEN=nuevo_session_token
+   ```
+4. **Reinicia el servicio:**
    ```bash
    # En el worker
    sudo systemctl restart anb-worker-sqs
+   # O reinicia el contenedor directamente
+   sudo docker restart anb-worker-sqs
    
    # En el backend
    sudo systemctl restart anb-api
    ```
+
+#### Manejo Automático de Errores
+
+El código ahora detecta automáticamente cuando las credenciales expiran (`InvalidClientTokenId`) e intenta recrear el cliente. Sin embargo, **si las credenciales han expirado, necesitas actualizar el `.env` y reiniciar el contenedor** para que el código pueda leer las nuevas credenciales.
+
+Verás en los logs mensajes como:
+```
+WARNING: Detected credential error (InvalidClientTokenId), attempting to recreate client...
+WARNING: NOTE: If credentials have expired, you need to:
+WARNING: 1. Update the .env file on the EC2 instance with new credentials
+WARNING: 2. Restart the worker container: docker restart anb-worker-sqs
+```
 
 ### Solicitar IAM Roles al Administrador
 
