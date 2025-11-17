@@ -462,6 +462,7 @@ docker rm anb-api
 ### Entrega 4
 - **[Documento de Arquitectura](docs/Entrega_4/ARQUITECTURA.md)** - Arquitectura completa del sistema con modelo de despliegue y componentes
 - **[Imágen de la Arquitectura](docs/Entrega_4/Arquitectura.pdf)** - Imágen de la arquitectura
+- **[Documento de Pruebas - Entrega 4](docs/Entrega_4/Documento de Pruebas Proyecto - Entrega 4.pdf)** - Documento completo de pruebas
 - **[Guía de Despliegue en AWS](docs/Entrega_4/AWS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar la arquitectura escalable y de alta disponibilidad
 - **[Plan de Migración](docs/Entrega_4/MIGRATION_PLAN.md)** - Plan de migración desde Entrega 3 a Entrega 4
 - **[Guía de Migración SQS](docs/Entrega_4/SQS_MIGRATION_GUIDE.md)** - Detalles técnicos de la migración de Celery/Redis a SQS
