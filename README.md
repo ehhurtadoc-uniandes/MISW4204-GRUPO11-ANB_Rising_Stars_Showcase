@@ -459,6 +459,12 @@ docker rm anb-api
 - **[Documento de Pruebas - Entrega 3](capacity-planning/Documento%20de%20Pruebas%20Proyecto%20-%20Entrega%203.pdf)** - Documento completo de pruebas de capacidad y rendimiento
 - **[Video de Sustentación - Entrega 3](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/EVCUxa-NzfpFqHhbelp9JncBadBKy3sSelYfrgdUvq8WCQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=JNtdTx)** - Video de sustentación de la Entrega 3
 
+### Entrega 4
+- **[Documento de Arquitectura](docs/Entrega_4/ARQUITECTURA.md)** - Arquitectura completa del sistema con modelo de despliegue y componentes
+- **[Guía de Despliegue en AWS](docs/Entrega_4/AWS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar la arquitectura escalable y de alta disponibilidad
+- **[Plan de Migración](docs/Entrega_4/MIGRATION_PLAN.md)** - Plan de migración desde Entrega 3 a Entrega 4
+- **[Guía de Migración SQS](docs/Entrega_4/SQS_MIGRATION_GUIDE.md)** - Detalles técnicos de la migración de Celery/Redis a SQS
+
 ## Licencia
 
 Este proyecto es desarrollado como parte del curso MISW4204 - Desarrollo de Software en la Nube, Universidad de los Andes.

@@ -2,15 +2,24 @@
 
 ## 📋 Resumen
 
-Esta guía te llevará paso a paso para implementar **desde cero** una arquitectura escalable y de alta disponibilidad en AWS para el sistema ANB Rising Stars Showcase.
+Esta guía te llevará paso a paso para implementar **desde cero** una arquitectura escalable y de alta disponibilidad en AWS para el sistema ANB Rising Stars Showcase, cumpliendo con los requisitos de la Entrega 4.
 
-**Características principales:**
-- ✅ **Amazon SQS** para mensajería asíncrona entre web y workers
-- ✅ **Auto Scaling** para Backend y Workers basado en métricas
-- ✅ **Alta Disponibilidad** desplegando en múltiples Availability Zones
-- ✅ **CloudWatch** para monitoreo completo del sistema
-- ✅ **RDS Multi-AZ** para alta disponibilidad de base de datos
-- ✅ **S3** para almacenamiento de videos
+> 📐 **Documentación de Arquitectura**: Para una descripción completa de la arquitectura del sistema, incluyendo el modelo de despliegue, modelo de componentes, tecnologías utilizadas y cambios respecto a la Entrega 3, consulta el **[Documento de Arquitectura](ARQUITECTURA.md)**.
+
+**Requisitos de la Entrega 4:**
+- ✅ **Actividad 3 (20%)**: Auto Scaling para Workers basado en cola de mensajes
+- ✅ **Actividad 4 (20%)**: Configurar SQS/Kinesis para comunicación asíncrona entre web y workers
+- ✅ **Actividad 5 (20%)**: Alta Disponibilidad desplegando en 2 Availability Zones
+- ✅ **Actividad 6 (10%)**: Requerimientos funcionales completos
+
+**Servicios AWS utilizados:**
+- **Amazon EC2**: Instancias con 2 vCPU, 2 GiB RAM, 30 GiB almacenamiento (web y workers)
+- **Amazon RDS**: Base de datos relacional PostgreSQL
+- **Amazon S3**: Almacenamiento de videos originales y procesados
+- **Amazon CloudWatch**: Monitoreo de instancias y servicios
+- **Auto Scaling**: Escalamiento automático de capa web y workers
+- **Application Load Balancer**: Distribución de carga entre instancias web
+- **Amazon SQS o Kinesis**: Mensajería asíncrona entre web y workers
 
 ---
 
@@ -18,12 +27,17 @@ Esta guía te llevará paso a paso para implementar **desde cero** una arquitect
 
 Si estás usando una **cuenta de estudiante** (como voclabs) o una cuenta con permisos restringidos, es posible que no puedas crear ciertos recursos directamente desde la consola.
 
-### 📋 Requisitos de la Entrega 4
+### 📋 Actividades de la Entrega 4
 
-Según los requisitos, **DEBES** implementar:
-- ✅ **SQS o Kinesis** (20%): Sistema de mensajería asíncrona
-- ✅ **Auto Scaling para Workers** (20%): Basado en cola de mensajes
-- ✅ **Alta Disponibilidad** (20%): Múltiples Availability Zones
+**Actividades ya completadas en Entrega 3:**
+- ✅ **Actividad 1**: Balanceador de carga configurado
+- ✅ **Actividad 2**: Auto Scaling para servidores web configurado
+
+**Actividades nuevas de la Entrega 4:**
+- ✅ **Actividad 3 (20%)**: Auto Scaling para Workers basado en cola de mensajes
+- ✅ **Actividad 4 (20%)**: Configurar SQS/Kinesis para comunicación asíncrona
+- ✅ **Actividad 5 (20%)**: Alta Disponibilidad en 2 Availability Zones
+- ✅ **Actividad 6 (10%)**: Requerimientos funcionales completos
 
 ### 🎯 Estrategia si No Puedes Crear SQS
 
@@ -43,7 +57,6 @@ Si no puedes crear ni SQS ni Kinesis, documenta:
 3. Qué recursos solicitaste al administrador
 4. Evidencia de que el código está preparado para usar SQS/Kinesis
 
-**📖 Para más detalles**, consulta la sección [Qué Hacer si No Puedes Crear SQS ni Kinesis](#qué-hacer-si-no-puedes-crear-sqs-ni-kinesis) al final de este documento.
 
 ### Recursos que Pueden Requerir Permisos del Administrador
 
@@ -98,6 +111,8 @@ aws sqs get-queue-url \
 
 ## Arquitectura
 
+> 📐 **Nota**: Esta sección muestra un resumen de la arquitectura. Para una descripción detallada del modelo de despliegue, modelo de componentes, tecnologías y cambios respecto a la Entrega 3, consulta el **[Documento de Arquitectura Completo](ARQUITECTURA.md)**.
+
 ### Diagrama de Arquitectura
 
 ```
@@ -144,13 +159,14 @@ aws sqs get-queue-url \
 
 ### Componentes
 
-- **Application Load Balancer (ALB)**: Distribuye tráfico entre instancias backend
-- **Auto Scaling Group (Backend)**: Escala automáticamente las instancias de la API
+- **Application Load Balancer (ALB)**: Distribuye tráfico entre instancias backend (Actividad 1 - completada)
+- **Auto Scaling Group (Backend)**: Escala automáticamente las instancias de la API (Actividad 2 - completada)
 - **RDS PostgreSQL (Multi-AZ)**: Base de datos con alta disponibilidad
-- **Amazon SQS**: Cola de mensajes para procesamiento asíncrono de videos
+- **Amazon SQS**: Cola de mensajes para procesamiento asíncrono de videos (Actividad 4 - 20%)
 - **S3 Bucket**: Almacenamiento de videos originales y procesados
-- **Auto Scaling Group (Workers)**: Escala automáticamente los workers basado en profundidad de cola SQS
+- **Auto Scaling Group (Workers)**: Escala automáticamente los workers basado en profundidad de cola SQS (Actividad 3 - 20%)
 - **CloudWatch**: Monitoreo y alertas del sistema
+- **Alta Disponibilidad**: Despliegue en 2 Availability Zones (Actividad 5 - 20%)
 
 ---
 
@@ -580,7 +596,7 @@ Solicita al administrador que cree el rol `anb-worker-role` con:
 
 **⚠️ IMPORTANTE**: SQS se configura ANTES del backend porque el backend necesita el Queue URL.
 
-**⚠️ Si no puedes crear SQS**: Si recibes errores de `AccessDeniedException` porque tu cuenta de estudiante no tiene permisos, consulta la sección [⚠️ IMPORTANTE: Cuentas de Estudiante / Permisos Restringidos](#-importante-cuentas-de-estudiante--permisos-restringidos) al inicio de este documento y la sección [Qué Hacer si No Puedes Crear SQS ni Kinesis](#qué-hacer-si-no-puedes-crear-sqs-ni-kinesis) al final.
+**⚠️ Si no puedes crear SQS**: Si recibes errores de `AccessDeniedException` porque tu cuenta de estudiante no tiene permisos, consulta la sección [⚠️ IMPORTANTE: Cuentas de Estudiante / Permisos Restringidos](#-importante-cuentas-de-estudiante--permisos-restringidos) al inicio de este documento.
 
 #### 6.1 Crear Queue Principal
 
@@ -907,7 +923,7 @@ curl http://localhost:8000/docs
    - **Name**: `anb-backend-asg`
    - **Launch template**: `anb-backend-launch-template`
    - **VPC**: `anb-vpc`
-   - **Subnets**: Seleccionar las 3 subnets privadas (múltiples AZs para alta disponibilidad)
+   - **Subnets**: Seleccionar **mínimo 2 subnets privadas en diferentes AZs** (para cumplir Actividad 5 - Alta Disponibilidad)
    - **Load balancing**:
      - **Attach to an existing load balancer**: Yes
      - **Target group**: `anb-backend-tg`
@@ -1044,14 +1060,14 @@ Y crear políticas de Step Scaling que respondan a estos alarms.
 2. Configuración:
    - **Name**: `anb-worker-ami-builder`
    - **AMI**: Ubuntu Server 22.04 LTS
-   - **Instance type**: `t3.small` (2 vCPU, 2 GiB RAM según especificaciones)
+   - **Instance type**: `t3.small` (2 vCPU, 2 GiB RAM - según especificaciones de la entrega)
    - **Key pair**: Tu key pair
    - **Network settings**:
      - **VPC**: `anb-vpc`
      - **Subnet**: Cualquier subnet privada
      - **Auto-assign public IP**: Enable (temporal para configuración)
      - **Security group**: `anb-worker-sg`
-   - **Configure storage**: 30 GiB gp3 (según especificaciones)
+   - **Configure storage**: 30 GiB gp3 (según especificaciones de la entrega)
    - **IAM instance profile**: `anb-worker-role`
    - **Advanced details**:
      - **User data**: Ver contenido de `scripts/aws/worker-sqs-user-data.sh` (copiar y pegar)
@@ -1101,12 +1117,12 @@ docker logs anb-worker-sqs
 2. Configuración:
    - **Name**: `anb-worker-launch-template`
    - **AMI**: Seleccionar `anb-worker-ami-v1`
-   - **Instance type**: `t3.small` (2 vCPU, 2 GiB RAM)
+   - **Instance type**: `t3.small` (2 vCPU, 2 GiB RAM - según especificaciones de la entrega)
    - **Key pair**: Tu key pair
    - **Network settings**:
      - **Subnet**: No incluir (se configurará en ASG)
      - **Security groups**: `anb-worker-sg`
-   - **Storage**: 30 GiB gp3
+   - **Storage**: 30 GiB gp3 (según especificaciones de la entrega)
    - **IAM instance profile**: `anb-worker-role`
 3. Click **Create launch template**
 
@@ -1121,7 +1137,7 @@ docker logs anb-worker-sqs
    - **Name**: `anb-worker-asg`
    - **Launch template**: `anb-worker-launch-template`
    - **VPC**: `anb-vpc`
-   - **Subnets**: Seleccionar **múltiples subnets privadas en diferentes AZs** (mínimo 2 AZs para alta disponibilidad)
+   - **Subnets**: Seleccionar **múltiples subnets privadas en diferentes AZs** (mínimo 2 AZs para cumplir Actividad 5 - Alta Disponibilidad)
    - **Load balancing**: No (workers no necesitan load balancer)
    - **Group size**:
      - **Desired capacity**: 1
@@ -1368,21 +1384,62 @@ Si necesitas usar el ARN completo de la cola, puedes usar:
 
 ### Paso 13: Configuración Final y Verificación
 
-#### 13.1 Verificar Alta Disponibilidad
+#### 13.1 Verificar Alta Disponibilidad (Actividad 5 - 20%)
 
 1. **Backend ASG**: 
-   - Verificar que esté en múltiples AZs
+   - Verificar que esté en **mínimo 2 AZs diferentes**
    - EC2 Dashboard → Auto Scaling Groups → `anb-backend-asg` → Verificar subnets
+   - **Requisito**: Instancias desplegadas en al menos 2 Availability Zones
 2. **Workers ASG**: 
-   - Verificar que esté en múltiples AZs
+   - Verificar que esté en **mínimo 2 AZs diferentes**
    - EC2 Dashboard → Auto Scaling Groups → `anb-worker-asg` → Verificar subnets
+   - **Requisito**: Instancias desplegadas en al menos 2 Availability Zones
 3. **RDS**: 
    - Verificar que Multi-AZ esté habilitado
    - RDS Dashboard → Seleccionar instancia → Verificar "Multi-AZ" = Yes
+4. **ALB**: 
+   - Verificar que esté configurado en múltiples AZs
+   - EC2 Dashboard → Load Balancers → `anb-alb` → Verificar Availability Zones
 
-#### 13.2 Pruebas End-to-End
+#### 13.2 Verificar Actividad 4: SQS/Kinesis (20%)
 
-1. **Subir un video desde la API**:
+1. **Verificar que el backend envía mensajes a SQS**:
+   ```bash
+   # Subir un video desde la API
+   curl -X POST http://ALB_DNS/api/videos/upload \
+     -H "Authorization: Bearer TOKEN" \
+     -F "title=Test Video" \
+     -F "video_file=@test.mp4"
+   
+   # Verificar mensaje en SQS
+   aws sqs get-queue-attributes \
+     --queue-url SQS_QUEUE_URL \
+     --attribute-names ApproximateNumberOfMessages
+   ```
+
+2. **Verificar que el worker consume de SQS**:
+   - Revisar logs del worker: `docker logs anb-worker-sqs`
+   - Verificar que el worker recibe y procesa mensajes
+
+3. **Verificar flujo completo**:
+   - Video subido → Mensaje en SQS → Worker procesa → Video procesado en S3
+
+#### 13.3 Verificar Actividad 3: Auto Scaling de Workers (20%)
+
+1. **Verificar configuración de Auto Scaling**:
+   - EC2 Dashboard → Auto Scaling Groups → `anb-worker-asg`
+   - Verificar que tenga política de Target Tracking basada en `ApproximateNumberOfMessagesVisible`
+
+2. **Probar escalamiento**:
+   - Subir múltiples videos para llenar la cola (10-20 videos)
+   - Verificar en CloudWatch que `ApproximateNumberOfMessagesVisible` aumente
+   - Verificar que el ASG agregue workers automáticamente
+   - Esperar a que se procesen los videos
+   - Verificar que el ASG remueva workers automáticamente cuando la cola esté vacía
+
+#### 13.4 Verificar Actividad 6: Requerimientos Funcionales (10%)
+
+1. **Subir video desde la API**:
    ```bash
    # Obtener token de autenticación primero
    curl -X POST http://ALB_DNS/api/auth/login \
@@ -1396,84 +1453,50 @@ Si necesitas usar el ARN completo de la cola, puedes usar:
      -F "video_file=@test.mp4"
    ```
 
-2. **Verificar mensaje en SQS**:
-   ```bash
-   aws sqs get-queue-attributes \
-     --queue-url SQS_QUEUE_URL \
-     --attribute-names ApproximateNumberOfMessages
-   ```
-
-3. **Verificar video en S3**:
+2. **Verificar video en S3**:
    ```bash
    aws s3 ls s3://anb-rising-starts-videos-east1/uploads/
    ```
 
-4. **Esperar procesamiento** (1-2 minutos)
+3. **Esperar procesamiento** (1-2 minutos)
 
-5. **Verificar video procesado en S3**:
+4. **Verificar video procesado en S3**:
    ```bash
    aws s3 ls s3://anb-rising-starts-videos-east1/processed_videos/
    ```
 
-6. **Verificar URL pública**:
+5. **Verificar URL pública**:
    - Consultar video desde API: `GET /api/videos/{video_id}`
    - Verificar que `processed_url` sea una URL pública de S3
 
-#### 13.3 Probar Escalamiento
-
-1. Subir múltiples videos para llenar la cola (10-20 videos)
-2. Verificar en CloudWatch que `ApproximateNumberOfMessagesVisible` aumente
-3. Verificar que el ASG agregue workers automáticamente
-4. Esperar a que se procesen los videos
-5. Verificar que el ASG remueva workers automáticamente cuando la cola esté vacía
+6. **Verificar funcionalidades completas**:
+   - Autenticación de usuarios
+   - Subida de videos
+   - Procesamiento asíncrono
+   - Consulta de videos
+   - Votación de videos
 
 ---
 
 ## Resumen de Pasos
 
+### Configuración Base (Completada en Entrega 3)
 1. **VPC y Networking** - Red privada con subnets públicas y privadas
 2. **RDS (PostgreSQL)** - Base de datos Multi-AZ
 3. **S3 Bucket** - Almacenamiento de videos
 4. **Security Groups** - Reglas de firewall
 5. **IAM Roles** - Permisos para SQS y S3
-6. **SQS** - Cola de mensajes (configurada ANTES del backend)
-7. **AMI y Launch Template Backend** - Imagen y template para API
-8. **Auto Scaling Group Backend** - Escalamiento automático de API
-9. **Application Load Balancer** - Balanceador de carga
+6. **AMI y Launch Template Backend** - Imagen y template para API
+7. **Auto Scaling Group Backend** - Escalamiento automático de API (Actividad 2)
+8. **Application Load Balancer** - Balanceador de carga (Actividad 1)
+
+### Configuración Entrega 4
+9. **SQS** - Cola de mensajes (Actividad 4 - 20%)
 10. **AMI y Launch Template Workers** - Imagen y template para workers
-11. **Auto Scaling Group Workers** - Escalamiento automático de workers
-12. **CloudWatch** - Monitoreo y alertas
-13. **Verificación** - Pruebas end-to-end
-
----
-
-## Troubleshooting
-
-### Workers no escalan
-
-1. Verificar que los CloudWatch alarms estén configurados
-2. Verificar que el ASG tenga las políticas de escalamiento
-3. Verificar métricas de SQS en CloudWatch
-4. Verificar que los IAM roles tengan permisos para CloudWatch
-
-### Mensajes se quedan en cola
-
-1. Verificar que los workers estén corriendo: `aws ec2 describe-instances --filters "Name=tag:Name,Values=anb-worker*"`
-2. Verificar permisos IAM del rol `anb-worker-role`
-3. Verificar logs de workers: `docker logs anb-worker-sqs` (desde instancia)
-4. Verificar que el SQS_QUEUE_URL esté correcto en el `.env`
-
-### Alta disponibilidad no funciona
-
-1. Verificar que las subnets estén en diferentes AZs
-2. Verificar que el ASG tenga instancias en múltiples AZs
-3. Probar fallo de una instancia y verificar que el sistema continúe funcionando
-
-### API no responde
-
-1. Verificar que las instancias del Target Group estén "Healthy"
-2. Verificar que el Security Group del ALB permita tráfico HTTP (puerto 80)
-3. Verificar logs de la API: `sudo journalctl -u anb-api -f` (desde instancia)
+11. **Auto Scaling Group Workers** - Escalamiento automático basado en cola (Actividad 3 - 20%)
+12. **Alta Disponibilidad** - Despliegue en 2 Availability Zones (Actividad 5 - 20%)
+13. **CloudWatch** - Monitoreo y alertas
+14. **Verificación** - Pruebas end-to-end (Actividad 6 - 10%)
 
 ---
 
@@ -1493,21 +1516,71 @@ Si necesitas usar el ARN completo de la cola, puedes usar:
 
 ---
 
-## Referencias
+## Checklist de Entrega
 
-- **[Guía de Despliegue Entrega 3](../Entrega_3/AWS_DEPLOYMENT_GUIDE.md)** - Documentación base (referencia histórica)
-- **[Plan de Migración](MIGRATION_PLAN.md)** - Si necesitas migrar desde Entrega 3
-- **[Guía de Migración SQS](SQS_MIGRATION_GUIDE.md)** - Detalles de migración a SQS
+### Actividad 3: Auto Scaling de Workers (20%)
+- [ ] Auto Scaling Group de Workers configurado
+- [ ] Política de Target Tracking basada en `ApproximateNumberOfMessagesVisible`
+- [ ] Workers escalan automáticamente cuando hay mensajes en la cola
+- [ ] Workers se reducen automáticamente cuando la cola está vacía
+- [ ] Verificado en CloudWatch que el escalamiento funciona
+
+### Actividad 4: SQS/Kinesis (20%)
+- [ ] Cola SQS creada y configurada
+- [ ] Dead Letter Queue configurada
+- [ ] Backend envía mensajes a SQS cuando se sube un video
+- [ ] Workers consumen mensajes de SQS
+- [ ] Flujo completo funcionando: Upload → SQS → Worker → S3
+
+### Actividad 5: Alta Disponibilidad (20%)
+- [ ] Backend ASG desplegado en mínimo 2 Availability Zones
+- [ ] Worker ASG desplegado en mínimo 2 Availability Zones
+- [ ] RDS Multi-AZ habilitado
+- [ ] ALB configurado en múltiples AZs
+- [ ] Verificado que el sistema continúa funcionando si falla una AZ
+
+### Actividad 6: Requerimientos Funcionales (10%)
+- [ ] Autenticación de usuarios funcionando
+- [ ] Subida de videos funcionando
+- [ ] Procesamiento asíncrono funcionando
+- [ ] Consulta de videos funcionando
+- [ ] Votación de videos funcionando
+- [ ] URLs públicas de videos funcionando
 
 ---
 
-## Notas Finales
+## Especificaciones Técnicas
 
-- Esta guía asume que estás implementando desde cero. Si ya tienes componentes de la Entrega 3, puedes adaptar los pasos.
-- Todos los valores de ejemplo (endpoints, nombres, etc.) deben ser reemplazados con tus valores reales.
-- Guarda todas las credenciales y endpoints en un lugar seguro.
-- Prueba cada componente antes de pasar al siguiente paso.
-- Considera usar AWS Systems Manager Parameter Store o Secrets Manager para almacenar credenciales de forma segura.
+### Instancias EC2
+
+Según los requisitos de la entrega, las instancias deben cumplir:
+- **vCPU**: 2
+- **RAM**: 2 GiB
+- **Almacenamiento**: 30 GiB
+
+**Tipo de instancia recomendado**: `t3.small` (2 vCPU, 2 GiB RAM)
+
+### Capacidad de Auto Scaling
+
+- **Backend ASG**: 
+  - Mínimo: 2 instancias
+  - Máximo: 3 instancias
+  - Deseado: 2 instancias
+  - Desplegado en mínimo 2 Availability Zones
+
+- **Worker ASG**: 
+  - Mínimo: 1 instancia
+  - Máximo: 3 instancias
+  - Deseado: 1 instancia
+  - Desplegado en mínimo 2 Availability Zones
+
+### Alta Disponibilidad
+
+- **Requisito**: Desplegar en mínimo 2 Availability Zones
+- **Backend**: Instancias en al menos 2 AZs diferentes
+- **Workers**: Instancias en al menos 2 AZs diferentes
+- **RDS**: Multi-AZ habilitado
+- **ALB**: Configurado en múltiples AZs
 
 ---
 
@@ -1549,212 +1622,3 @@ Si decides usar Kinesis, necesitarás:
    - Configurar alarms en CloudWatch
 
 **Nota**: Esta guía se enfoca en SQS porque es más simple y el código ya está implementado. Si necesitas usar Kinesis, puedes adaptar los pasos.
-
----
-
-## Qué Hacer si No Puedes Crear SQS ni Kinesis
-
-Si no puedes crear ni SQS ni Kinesis, sigue estos pasos:
-
-### 1. Documentar la Restricción
-
-Crea un documento (por ejemplo, `docs/Entrega_4/RESTRICCIONES_CUENTA_ESTUDIANTE.md`) explicando:
-
-```markdown
-# Restricciones de Cuenta de Estudiante - Entrega 4
-
-## Problema Encontrado
-
-Mi cuenta de estudiante (voclabs) no tiene permisos para crear recursos SQS.
-Error recibido: `AccessDeniedException: User is not authorized to perform: sqs:createqueue`
-
-## Recursos Solicitados al Administrador
-
-1. Cola SQS: `anb-video-processing-queue`
-2. Dead Letter Queue: `anb-video-processing-dlq`
-3. IAM Roles: `anb-backend-role` y `anb-worker-role`
-
-## Estado Actual
-
-- ✅ Código implementado para usar SQS
-- ✅ Workers preparados para consumir de SQS
-- ✅ Backend preparado para enviar a SQS
-- ⏳ Esperando creación de recursos por administrador
-
-## Implementación en Producción
-
-En un entorno de producción, estos recursos se crearían mediante:
-- Infrastructure as Code (Terraform/CloudFormation)
-- Permisos IAM apropiados
-- Automatización completa del despliegue
-```
-
-### 2. Evidenciar que el Código Está Listo
-
-Aunque no puedas crear SQS, puedes demostrar que:
-
-- ✅ El código del backend envía mensajes a SQS (`app/api/videos.py`)
-- ✅ El código del worker consume de SQS (`app/workers/sqs_worker.py`)
-- ✅ El servicio SQS está implementado (`app/services/sqs_service.py`)
-- ✅ La configuración está lista (`app/core/config.py`)
-
-### 3. Probar Localmente (si es posible)
-
-Si tienes acceso a una cuenta AWS de prueba o puedes usar LocalStack:
-
-```bash
-# Instalar LocalStack
-pip install localstack
-
-# Iniciar LocalStack
-localstack start
-
-# Crear cola SQS en LocalStack
-aws --endpoint-url=http://localhost:4566 sqs create-queue \
-  --queue-name anb-video-processing-queue
-
-# Probar el código localmente con LocalStack
-```
-
-### 4. Solicitar al Administrador
-
-Usa el template de email del Paso 6.4 para solicitar los recursos. Incluye:
-
-- **Urgencia**: Explica que es un requisito de la entrega
-- **Especificaciones técnicas**: Proporciona todos los detalles
-- **Timeline**: Solicita un timeline para la creación
-
-### 5. Plan de Contingencia
-
-Si el administrador no puede crear los recursos a tiempo:
-
-1. **Documenta todo**: Qué intentaste, qué errores recibiste, qué solicitaste
-2. **Muestra el código**: Demuestra que el código está implementado y listo
-3. **Explica el diseño**: Documenta cómo funcionaría en producción
-4. **Alternativa temporal**: Si es posible, usa Redis/Celery temporalmente y documenta que es una solución temporal hasta tener SQS
-
-### 6. Para la Entrega
-
-En tu documentación de entrega, incluye:
-
-- ✅ **Diseño de la arquitectura**: Muestra cómo SQS se integra
-- ✅ **Código implementado**: Muestra que el código está listo para SQS
-- ✅ **Configuración**: Muestra la configuración de SQS en `.env` y scripts
-- ✅ **Documentación de restricciones**: Explica qué restricciones encontraste
-- ✅ **Plan de implementación**: Cómo se implementaría en producción
-
-**Nota**: Los profesores entienden las restricciones de cuentas de estudiante. Lo importante es demostrar que:
-1. Entiendes cómo funciona SQS
-2. Has implementado el código correctamente
-3. Has solicitado los recursos necesarios
-4. Sabes cómo se implementaría en producción
-
----
-
-## Solución Temporal: Usar Credenciales
-
-Si no puedes crear IAM Roles y necesitas que el sistema funcione **ahora mismo**, puedes usar credenciales AWS temporales en el `.env`:
-
-### ⚠️ ADVERTENCIA DE SEGURIDAD
-
-- **NO es recomendado para producción**
-- Las credenciales temporales expiran (típicamente 1 hora)
-- Debes renovarlas manualmente
-- **Solo para desarrollo/pruebas**
-
-### Cómo Obtener Credenciales Temporales
-
-1. **Desde la consola de AWS:**
-   - Click en tu nombre de usuario (arriba derecha)
-   - **"Command line or programmatic access"**
-   - Copia los valores de `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, y `AWS_SESSION_TOKEN`
-
-2. **O desde AWS CLI:**
-   ```bash
-   aws sts get-session-token
-   ```
-
-### Configurar en el Worker
-
-En `scripts/aws/worker-sqs-user-data.sh`, descomenta y actualiza las credenciales:
-
-```bash
-# AWS Credentials (TEMPORAL - solo si no puedes usar IAM Role)
-AWS_ACCESS_KEY_ID=TU_ACCESS_KEY_AQUI
-AWS_SECRET_ACCESS_KEY=TU_SECRET_KEY_AQUI
-AWS_SESSION_TOKEN=TU_SESSION_TOKEN_AQUI
-```
-
-**Nota**: El código ya está preparado para usar credenciales si están disponibles, o IAM Role si no hay credenciales (ver `app/services/sqs_service.py`).
-
-### Configurar en el Backend
-
-En `scripts/aws/backend-user-data.sh`, descomenta y actualiza las credenciales de la misma manera.
-
-### Renovar Credenciales
-
-Las credenciales temporales expiran (típicamente después de 1 hora). Cuando expiren:
-
-#### Opción 1: Script Helper (Recomendado)
-
-El proyecto incluye un script helper para actualizar credenciales fácilmente:
-
-```bash
-# En la instancia EC2 del worker
-cd /opt/anb-worker
-sudo ./scripts/aws/update-worker-credentials.sh \
-  ASIA5GE6GSAWJ3OEGRON \
-  tqUUtKrCMTluoy0hJwaIAUeVsfcp3Cy2uJhwfpS1 \
-  IQoJb3JpZ2luX2VjEK7...
-```
-
-Luego reinicia el contenedor:
-```bash
-sudo docker restart anb-worker-sqs
-```
-
-#### Opción 2: Manual
-
-1. **Obtén nuevas credenciales** desde la consola de AWS
-2. **Edita el `.env`** en la instancia:
-   ```bash
-   sudo nano /opt/anb-worker/.env
-   ```
-3. **Actualiza las líneas:**
-   ```bash
-   AWS_ACCESS_KEY_ID=nueva_access_key
-   AWS_SECRET_ACCESS_KEY=nueva_secret_key
-   AWS_SESSION_TOKEN=nuevo_session_token
-   ```
-4. **Reinicia el servicio:**
-   ```bash
-   # En el worker
-   sudo systemctl restart anb-worker-sqs
-   # O reinicia el contenedor directamente
-   sudo docker restart anb-worker-sqs
-   
-   # En el backend
-   sudo systemctl restart anb-api
-   ```
-
-#### Manejo Automático de Errores
-
-El código ahora detecta automáticamente cuando las credenciales expiran (`InvalidClientTokenId`) e intenta recrear el cliente. Sin embargo, **si las credenciales han expirado, necesitas actualizar el `.env` y reiniciar el contenedor** para que el código pueda leer las nuevas credenciales.
-
-Verás en los logs mensajes como:
-```
-WARNING: Detected credential error (InvalidClientTokenId), attempting to recreate client...
-WARNING: NOTE: If credentials have expired, you need to:
-WARNING: 1. Update the .env file on the EC2 instance with new credentials
-WARNING: 2. Restart the worker container: docker restart anb-worker-sqs
-```
-
-### Solicitar IAM Roles al Administrador
-
-Mientras usas credenciales temporales, **solicita al administrador** que cree los roles IAM. Una vez creados:
-
-1. Asigna el IAM Role a las instancias EC2
-2. Elimina las credenciales del `.env`
-3. Reinicia los servicios
-
-El código detectará automáticamente que no hay credenciales y usará el IAM Role.
