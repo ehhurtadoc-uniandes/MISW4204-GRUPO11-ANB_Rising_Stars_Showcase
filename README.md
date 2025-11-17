@@ -14,7 +14,7 @@ El video de sustentación para la Entrega 1 esta disponible en: [sustentacion/En
 
 El video de sustentación para la Entrega 2 esta disponible en: [Sustentacion entrega_2](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/ER30KqTZtkROkaRrtZp3ICkBs7q8I5HYmNjdg73uokdplA?e=SlC9Lt)
 
-El vídeo de sustentación para la Entrega 4 está disponible en: [Sustentacion entrega_2]([https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/ER30KqTZtkROkaRrtZp3ICkBs7q8I5HYmNjdg73uokdplA?e=SlC9Lt](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQA6v9ipB7_nQqhKhtSnTbH0ATk_-leyQKNQ-L3UJ4VylF8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=8ksOr3))
+El vídeo de sustentación para la Entrega 4 está disponible en: [Sustentacion entrega_4]([https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/ER30KqTZtkROkaRrtZp3ICkBs7q8I5HYmNjdg73uokdplA?e=SlC9Lt](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQA6v9ipB7_nQqhKhtSnTbH0ATk_-leyQKNQ-L3UJ4VylF8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=8ksOr3))
 
 ## Enlaces Importantes
 
