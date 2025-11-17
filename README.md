@@ -466,6 +466,7 @@ docker rm anb-api
 - **[Guía de Despliegue en AWS](docs/Entrega_4/AWS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar la arquitectura escalable y de alta disponibilidad
 - **[Plan de Migración](docs/Entrega_4/MIGRATION_PLAN.md)** - Plan de migración desde Entrega 3 a Entrega 4
 - **[Guía de Migración SQS](docs/Entrega_4/SQS_MIGRATION_GUIDE.md)** - Detalles técnicos de la migración de Celery/Redis a SQS
+- **[Video de Sustentación - Entrega 4](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQA6v9ipB7_nQqhKhtSnTbH0ATk_-leyQKNQ-L3UJ4VylF8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=8ksOr3)** - Video de sustentación de la Entrega 4
 
 ## Licencia
 
