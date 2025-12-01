@@ -465,6 +465,12 @@ docker rm anb-api
 - **[Plan de Migración](docs/Entrega_4/MIGRATION_PLAN.md)** - Plan de migración desde Entrega 3 a Entrega 4
 - **[Guía de Migración SQS](docs/Entrega_4/SQS_MIGRATION_GUIDE.md)** - Detalles técnicos de la migración de Celery/Redis a SQS
 
+### Entrega 5
+- **[README Entrega 5](docs/Entrega_5/README.md)** - Resumen y documentación de la Entrega 5 (PaaS)
+- **[Guía de Despliegue PaaS](docs/Entrega_5/AWS_PAAS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar en ECS Fargate
+- **[Arquitectura PaaS](docs/Entrega_5/ARQUITECTURA_PAAS.md)** - Arquitectura del sistema en modelo PaaS y comparación con IaaS
+- **[Plan de Migración IaaS → PaaS](docs/Entrega_5/MIGRATION_PLAN_PAAS.md)** - Plan detallado de migración desde Entrega 4 (IaaS) a Entrega 5 (PaaS)
+
 ## Licencia
 
 Este proyecto es desarrollado como parte del curso MISW4204 - Desarrollo de Software en la Nube, Universidad de los Andes.
