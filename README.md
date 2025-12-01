@@ -472,7 +472,8 @@ docker rm anb-api
 
 ### Entrega 5
 - **[README Entrega 5](docs/Entrega_5/README.md)** - Resumen y documentación de la Entrega 5 (PaaS)
-- **[Guía de Despliegue PaaS](docs/Entrega_5/AWS_PAAS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar en ECS Fargate
+- **[Guía de Despliegue PaaS](docs/Entrega_5/AWS_PAAS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar en Lambda/ECS
+- **[Guía de Despliegue Lambda](docs/Entrega_5/LAMBDA_DEPLOYMENT_GUIDE.md)** - Guía detallada para desplegar la capa web en AWS Lambda
 - **[Arquitectura PaaS](docs/Entrega_5/ARQUITECTURA_PAAS.md)** - Arquitectura del sistema en modelo PaaS y comparación con IaaS
 - **[Plan de Migración IaaS → PaaS](docs/Entrega_5/MIGRATION_PLAN_PAAS.md)** - Plan detallado de migración desde Entrega 4 (IaaS) a Entrega 5 (PaaS)
 

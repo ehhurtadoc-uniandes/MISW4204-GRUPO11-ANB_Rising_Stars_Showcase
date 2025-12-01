@@ -2,7 +2,7 @@
 
 ## 📋 Resumen
 
-Este documento describe la arquitectura del sistema ANB Rising Stars Showcase desplegado en un modelo **PaaS (Platform as a Service)** utilizando servicios administrados de AWS, específicamente **Amazon ECS (Elastic Container Service)** con **Fargate**.
+Este documento describe la arquitectura del sistema ANB Rising Stars Showcase desplegado en un modelo **PaaS (Platform as a Service)** utilizando servicios administrados de AWS, específicamente **AWS Lambda** para la capa web y **Amazon ECS (Elastic Container Service)** con **Fargate** para los workers.
 
 ## 🎯 Objetivo
 
@@ -25,28 +25,27 @@ Migrar de un modelo IaaS (EC2 con Auto Scaling) a un modelo PaaS para:
                          │
                          ▼
               ┌──────────────────────┐
-              │  Application Load    │
-              │    Balancer (ALB)   │
-              │  - Distribución      │
-              │  - Health checks     │
-              │  - SSL/TLS (opcional)│
+              │   API Gateway        │
+              │  - REST API          │
+              │  - CORS              │
+              │  - SSL/TLS           │
               └──────────┬───────────┘
                          │
                          ▼
         ┌────────────────────────────────────┐
-        │   ECS Cluster: Web Layer           │
-        │   Launch Type: Fargate (Serverless)│
+        │   AWS Lambda: Web Layer            │
+        │   (Serverless Functions)            │
         │                                    │
         │  ┌──────────┐      ┌──────────┐   │
-        │  │  Task    │      │  Task    │   │
+        │  │ Function │      │ Function │   │
         │  │  (API)  │      │  (API)  │   │
         │  │          │      │          │   │
         │  │ FastAPI  │      │ FastAPI  │   │
-        │  │ :8000    │      │ :8000    │   │
+        │  │ Mangum   │      │ Mangum   │   │
         │  └──────────┘      └──────────┘   │
         │                                    │
-        │   Auto Scaling: 2-5 tasks          │
-        │   Métrica: ALBRequestCountPerTarget│
+        │   Auto Scaling: Automático         │
+        │   Concurrencia: Hasta 10 (estudiante)│
         └────────────────────────────────────┘
                          │
         ┌────────────────┼────────────────┐
@@ -86,35 +85,40 @@ Migrar de un modelo IaaS (EC2 con Auto Scaling) a un modelo PaaS para:
 
 ### Capa de Presentación
 
-#### Application Load Balancer (ALB)
-- **Tipo**: Application Load Balancer
-- **Función**: Distribución de carga HTTP/HTTPS
+#### API Gateway
+- **Tipo**: REST API
+- **Función**: Punto de entrada HTTP/HTTPS para Lambda
 - **Configuración**:
-  - Listener HTTP (puerto 80)
-  - Target Group apuntando a tareas ECS (puerto 8000)
-  - Health checks en `/health`
-  - Distribución en múltiples AZs
+  - Endpoint Regional
+  - Resource `{proxy+}` con método ANY
+  - Integración Lambda Proxy
+  - CORS habilitado
+  - SSL/TLS automático
 
 ### Capa de Aplicación (Web)
 
-#### ECS Service: API
-- **Cluster**: `anb-rising-stars-cluster`
-- **Service**: `anb-api-service`
-- **Launch Type**: Fargate (Serverless)
-- **Task Definition**: `anb-api-task`
-- **Contenedor**: FastAPI (Python 3.12)
+#### AWS Lambda: API
+- **Function Name**: `anb-api-lambda`
+- **Runtime**: Python 3.12
+- **Handler**: `lambda_handler.handler`
+- **Adaptador**: Mangum (ASGI adapter para FastAPI)
 - **Recursos**:
-  - CPU: 0.5 vCPU (512)
-  - Memoria: 1 GB (1024)
+  - Memoria: 512 MB (configurable 128 MB - 10 GB)
+  - Timeout: 30 segundos (máximo 15 minutos)
+  - Ephemeral storage: 512 MB (configurable hasta 10 GB)
 - **Escalado**:
-  - Mínimo: 2 tareas
-  - Máximo: 5 tareas
-  - Métrica: `ALBRequestCountPerTarget` (100 requests/minuto por tarea)
+  - Automático e ilimitado (hasta 10 concurrente en cuentas de estudiante)
+  - Sin configuración de auto-scaling necesaria
 - **Endpoints**:
   - `/api/auth/*` - Autenticación
   - `/api/videos/*` - Gestión de videos
   - `/api/public/*` - Endpoints públicos
   - `/health` - Health check
+- **Ventajas**:
+  - ✅ Pago por uso (muy económico)
+  - ✅ Escalado automático sin configuración
+  - ✅ Sin gestión de servidores
+  - ✅ Alta disponibilidad automática
 
 ### Capa de Procesamiento (Workers)
 

@@ -15,9 +15,10 @@ Esta entrega consiste en migrar la aplicación de un modelo IaaS (EC2 con Auto S
 
 ### Guías Principales
 
-1. **[Guía de Despliegue PaaS](AWS_PAAS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar en ECS
-2. **[Arquitectura PaaS](ARQUITECTURA_PAAS.md)** - Arquitectura del sistema en modelo PaaS
-3. **[Plan de Migración IaaS → PaaS](MIGRATION_PLAN_PAAS.md)** - Plan detallado de migración
+1. **[Guía de Despliegue PaaS](AWS_PAAS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar en Lambda/ECS
+2. **[Guía de Despliegue Lambda](LAMBDA_DEPLOYMENT_GUIDE.md)** - Guía detallada para desplegar la capa web en Lambda
+3. **[Arquitectura PaaS](ARQUITECTURA_PAAS.md)** - Arquitectura del sistema en modelo PaaS
+4. **[Plan de Migración IaaS → PaaS](MIGRATION_PLAN_PAAS.md)** - Plan detallado de migración
 
 ### Configuraciones
 
@@ -26,17 +27,27 @@ Esta entrega consiste en migrar la aplicación de un modelo IaaS (EC2 con Auto S
 
 ## ✅ Actividades de la Entrega
 
-### Actividad 1 (20%): Capa Web en ECS/Lambda
-- [ ] Configurar ECS Cluster
-- [ ] Crear Task Definition para API
-- [ ] Desplegar servicio ECS con ALB
-- [ ] Verificar que responde a solicitudes HTTP
+### Actividad 1 (20%): Capa Web en Lambda/ECS
+- [ ] **Opción Lambda (Recomendada sin ECR)**:
+  - [ ] Crear función Lambda con FastAPI
+  - [ ] Configurar API Gateway
+  - [ ] Verificar que responde a solicitudes HTTP
+- [ ] **Opción ECS (Requiere ECR)**:
+  - [ ] Configurar ECS Cluster
+  - [ ] Crear Task Definition para API
+  - [ ] Desplegar servicio ECS con ALB
+  - [ ] Verificar que responde a solicitudes HTTP
 
-### Actividad 2 (20%): Capa Worker en ECS/Lambda
-- [ ] Crear Task Definition para Workers
-- [ ] Desplegar servicio ECS para workers
-- [ ] Configurar consumo de mensajes SQS
-- [ ] Verificar procesamiento de videos
+### Actividad 2 (20%): Capa Worker en Lambda/ECS
+- [ ] **Opción Lambda (Recomendada sin ECR)**:
+  - [ ] Crear función Lambda para worker
+  - [ ] Configurar SQS Trigger
+  - [ ] Verificar procesamiento de videos
+- [ ] **Opción ECS (Requiere ECR)**:
+  - [ ] Crear Task Definition para Workers
+  - [ ] Desplegar servicio ECS para workers
+  - [ ] Configurar consumo de mensajes SQS
+  - [ ] Verificar procesamiento de videos
 
 ### Actividad 3 (10%): Base de Datos RDS
 - [ ] Configurar instancia RDS (db.t3.micro para desarrollo)
@@ -105,11 +116,21 @@ Esta entrega consiste en migrar la aplicación de un modelo IaaS (EC2 con Auto S
 
 ## 🔧 Tecnologías Utilizadas
 
+### Opción Recomendada (Sin ECR):
+- **AWS Lambda**: Funciones serverless para web y workers
+- **API Gateway**: Punto de entrada HTTP para Lambda
+- **Amazon SQS**: Mensajería asíncrona con trigger automático a Lambda
+- **Amazon RDS**: Base de datos PostgreSQL administrada
+- **Amazon S3**: Almacenamiento de objetos
+- **Amazon CloudWatch**: Monitoreo y logs
+
+### Opción Alternativa (Con ECR):
 - **Amazon ECS (Fargate)**: Ejecución de contenedores sin gestión de servidores
+- **Amazon ECR**: Registro de contenedores Docker
+- **Application Load Balancer**: Distribución de carga (para ECS)
 - **Amazon RDS**: Base de datos PostgreSQL administrada
 - **Amazon S3**: Almacenamiento de objetos
 - **Amazon SQS**: Mensajería asíncrona
-- **Application Load Balancer**: Distribución de carga
 - **Amazon CloudWatch**: Monitoreo y logs
 - **Docker**: Contenedores de la aplicación
 

@@ -1,49 +1,68 @@
-# Guía de Despliegue en PaaS (AWS ECS) - Entrega 5
+# Guía de Despliegue en PaaS (AWS Lambda/ECS) - Entrega 5
 
 ## 📋 Resumen
 
-Esta guía te llevará paso a paso para migrar la aplicación de un modelo IaaS (EC2) a un modelo PaaS utilizando **Amazon ECS (Elastic Container Service)** con **Fargate**, cumpliendo con los requisitos de la Entrega 5.
+Esta guía te llevará paso a paso para migrar la aplicación de un modelo IaaS (EC2) a un modelo PaaS utilizando **AWS Lambda** o **Amazon ECS (Fargate)**, cumpliendo con los requisitos de la Entrega 5.
 
 **Requisitos de la Entrega 5:**
-- ✅ **Actividad 1 (20%)**: Capa web en ECS/Lambda
-- ✅ **Actividad 2 (20%)**: Capa worker en ECS/Lambda
+- ✅ **Actividad 1 (20%)**: Capa web en Lambda o ECS
+- ✅ **Actividad 2 (20%)**: Capa worker en Lambda o ECS
 - ✅ **Actividad 3 (10%)**: Base de datos RDS configurada
 - ✅ **Actividad 4 (10%)**: Sistema de mensajería (SQS/SNS/Kinesis)
 - ✅ **Actividad 5 (10%)**: Almacenamiento S3
 - ✅ **Actividad 6 (10%)**: Requerimientos funcionales completos
 
+**Opciones de Despliegue:**
+- **Opción A: AWS Lambda** (Recomendada para capa web) - Serverless, sin gestión de servidores
+- **Opción B: Amazon ECS Fargate** (Recomendada para workers) - Contenedores sin gestión de servidores
+
 **Servicios AWS utilizados:**
-- **Amazon ECS (Fargate)**: Ejecución de contenedores sin gestión de servidores
+- **AWS Lambda**: Funciones serverless (capa web)
+- **Amazon ECS (Fargate)**: Contenedores sin gestión de servidores (workers)
 - **Amazon RDS**: Base de datos PostgreSQL administrada
 - **Amazon S3**: Almacenamiento de videos
 - **Amazon SQS**: Mensajería asíncrona entre web y workers
-- **Application Load Balancer**: Distribución de carga
+- **API Gateway**: Punto de entrada para Lambda (capa web)
 - **Amazon CloudWatch**: Monitoreo y logs
 
 ---
 
-## ⚠️ IMPORTANTE: Cuentas de Estudiante
+## ⚠️ IMPORTANTE: Cuentas de Estudiante y Permisos Restringidos
 
 Si estás usando una cuenta de estudiante (voclabs) con permisos restringidos:
 
-### Permisos Especiales
+### Problemas Comunes
 
-1. **LabRole**: Debes usar `LabRole` como rol de tarea y ejecución en ECS
-2. **ECS Service Linked Role**: Si aparece el error "the ECS service linked role could not be assumed", regresa y vuelve a intentar (el rol se crea automáticamente)
-3. **Auto Scaling Group**: Si usas EC2 para ECS (no Fargate), crea primero el Auto Scaling Group desde EC2 Console
+1. **No puedes crear ECR Repository**: Si no tienes permisos para crear ECR, usa **Lambda** (no requiere ECR)
+2. **LabRole**: Debes usar `LabRole` como rol de ejecución
+3. **Límites de Lambda**: Máximo 10 instancias concurrentes en cuentas de estudiante
+4. **ECS Service Linked Role**: Si aparece el error "the ECS service linked role could not be assumed", regresa y vuelve a intentar
 
-### Límites de Lambda
+### Recomendación de Arquitectura (Sin ECR)
 
-- **Máximo 10 instancias concurrentes** en cuentas de estudiante
-- Si eliges Lambda, considera este límite para la capa web
+**Si NO puedes crear ECR, usa esta arquitectura:**
 
-### Recomendación
+- **Capa Web**: **AWS Lambda** con API Gateway
+  - ✅ No requiere ECR
+  - ✅ Deployment package como ZIP (hasta 50 MB)
+  - ✅ Serverless puro, sin gestión de servidores
+  - ✅ Escalado automático
+  - ⚠️ Límite: 10 instancias concurrentes en cuentas de estudiante
 
-**Usa ECS Fargate** en lugar de ECS con EC2 o Lambda, porque:
-- ✅ No requiere gestión de servidores
-- ✅ Escala automáticamente
-- ✅ Compatible con procesamiento de video (FFmpeg, MoviePy)
-- ✅ Sin límites de tiempo como Lambda (15 minutos máximo)
+- **Capa Worker**: **AWS Lambda** con SQS Trigger
+  - ✅ No requiere ECR
+  - ✅ Deployment package como ZIP
+  - ✅ Trigger automático desde SQS
+  - ⚠️ Límite de tiempo: 15 minutos máximo (suficiente para procesar videos)
+  - ⚠️ Límite: 10 instancias concurrentes
+
+**Alternativa si necesitas más tiempo para workers:**
+- **Capa Worker**: **ECS Fargate con imagen pública de Docker Hub**
+  - ✅ No requiere ECR (usa Docker Hub público)
+  - ✅ Sin límites de tiempo
+  - ⚠️ Requiere permisos para crear ECS Cluster (mínimo)
+
+**Nota sobre ECS Clusters**: ECS Fargate requiere un "cluster" pero es solo un contenedor lógico. No necesitas gestionar servidores EC2, solo creas el cluster y AWS gestiona todo automáticamente.
 
 ---
 
@@ -119,6 +138,317 @@ Si estás usando una cuenta de estudiante (voclabs) con permisos restringidos:
 ---
 
 ## Configuración Paso a Paso
+
+Esta guía ofrece dos opciones:
+- **Opción A: Lambda para Web + ECS para Workers** (Recomendada)
+- **Opción B: ECS para Web + ECS para Workers**
+
+---
+
+## Opción A: Lambda para Capa Web + Lambda para Workers (Recomendada si NO tienes ECR)
+
+**Esta opción NO requiere ECR** - Ideal para cuentas de estudiante con permisos restringidos.
+
+### Paso 1: Preparar FastAPI para Lambda
+
+FastAPI necesita un adaptador para funcionar con Lambda. Usaremos **Mangum**.
+
+#### 1.1 Instalar Mangum
+
+Agrega `mangum` a `requirements.txt`:
+
+```bash
+echo "mangum>=0.17.0" >> requirements.txt
+```
+
+#### 1.2 Crear Handler Lambda
+
+Crea un archivo `lambda_handler.py` en la raíz del proyecto:
+
+```python
+from mangum import Mangum
+from app.main import app
+
+# Crear handler Lambda
+handler = Mangum(app, lifespan="off")
+```
+
+#### 1.3 Crear Deployment Package
+
+```bash
+# Crear directorio para Lambda
+mkdir -p lambda-package
+
+# Instalar dependencias en el directorio
+pip install -r requirements.txt -t lambda-package/
+
+# Copiar código de la aplicación
+cp -r app lambda-package/
+cp lambda_handler.py lambda-package/
+
+# Crear ZIP
+cd lambda-package
+zip -r ../lambda-deployment.zip .
+cd ..
+```
+
+**Nota**: El ZIP no debe exceder 50 MB (250 MB descomprimido). Si es muy grande, considera usar Lambda Layers o ECR para contenedores.
+
+### Paso 2: Crear Función Lambda
+
+#### 2.1 Crear Función desde ZIP
+
+1. **Lambda Dashboard** → **Functions** → **Create function**
+2. Configuración:
+   - **Function name**: `anb-api-lambda`
+   - **Runtime**: Python 3.12
+   - **Architecture**: x86_64
+   - **Execution role**: `LabRole` (o crear uno nuevo con permisos para RDS, S3, SQS)
+3. Click **Create function**
+
+#### 2.2 Subir Código
+
+1. En la función Lambda, **Code** → **Upload from** → **.zip file**
+2. Sube `lambda-deployment.zip`
+3. **Handler**: `lambda_handler.handler`
+
+#### 2.3 Configurar Variables de Entorno
+
+En **Configuration** → **Environment variables**, agrega:
+
+```
+DATABASE_URL=postgresql://anb_admin:PASSWORD@RDS_ENDPOINT:5432/anb_db
+POSTGRES_HOST=RDS_ENDPOINT
+POSTGRES_PORT=5432
+POSTGRES_USER=anb_admin
+POSTGRES_PASSWORD=PASSWORD
+POSTGRES_DB=anb_db
+SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/ACCOUNT_ID/anb-video-processing-queue
+SQS_REGION=us-east-1
+SECRET_KEY=TU_SECRET_KEY
+STORAGE_TYPE=cloud
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=anb-rising-stars-videos-east1
+S3_UPLOAD_PREFIX=uploads/
+S3_PROCESSED_PREFIX=processed_videos/
+ENVIRONMENT=production
+DEBUG=False
+```
+
+#### 2.4 Configurar Timeout y Memoria
+
+- **Timeout**: 30 segundos (máximo 15 minutos, pero para API REST 30s es suficiente)
+- **Memory**: 512 MB (ajustar según necesidad)
+
+### Paso 3: Crear API Gateway
+
+#### 3.1 Crear REST API
+
+1. **API Gateway Dashboard** → **APIs** → **Create API**
+2. Seleccionar **REST API** → **Build**
+3. Configuración:
+   - **Protocol**: REST
+   - **Create new API**: New API
+   - **API name**: `anb-api-gateway`
+   - **Endpoint Type**: Regional
+4. Click **Create API**
+
+#### 3.2 Crear Resource y Method
+
+1. **Actions** → **Create Resource**
+   - **Resource Name**: `{proxy+}`
+   - **Resource Path**: `{proxy+}`
+   - **Enable API Gateway CORS**: Sí
+2. Click **Create Resource**
+
+3. Con el resource `{proxy+}` seleccionado, **Actions** → **Create Method** → **ANY**
+   - **Integration type**: Lambda Function
+   - **Lambda Function**: `anb-api-lambda`
+   - **Use Lambda Proxy integration**: Sí
+4. Click **Save** → **OK** (permiso para invocar Lambda)
+
+#### 3.3 Configurar CORS (si es necesario)
+
+1. Seleccionar `{proxy+}` → **Actions** → **Enable CORS**
+2. Configurar headers permitidos
+3. Click **Enable CORS and replace existing CORS headers**
+
+#### 3.4 Desplegar API
+
+1. **Actions** → **Deploy API**
+2. Configuración:
+   - **Deployment stage**: `prod` (o crear uno nuevo)
+   - **Stage name**: `prod`
+3. Click **Deploy**
+
+**Nota**: Anota la **Invoke URL** (ej: `https://abc123.execute-api.us-east-1.amazonaws.com/prod`)
+
+### Paso 4: Configurar Workers en Lambda (SQS Trigger)
+
+#### 4.1 Crear Lambda Handler para Worker
+
+Crea `lambda_worker_handler.py` en la raíz del proyecto:
+
+```python
+"""
+Lambda handler para SQS Worker
+Procesa mensajes de SQS para procesar videos
+
+Nota: Lambda elimina automáticamente los mensajes de SQS si la función
+se ejecuta exitosamente. Si la función falla, el mensaje vuelve a la cola.
+"""
+import json
+import logging
+from app.workers.sqs_worker import process_video
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+def handler(event, context):
+    """
+    Handler Lambda que procesa mensajes de SQS
+    
+    Args:
+        event: Evento de SQS con Records
+        context: Contexto de Lambda
+        
+    Nota: Si la función completa exitosamente, Lambda elimina automáticamente
+    los mensajes de SQS. Si falla, los mensajes vuelven a la cola para retry.
+    """
+    logger.info(f"Received {len(event.get('Records', []))} messages from SQS")
+    
+    processed_count = 0
+    failed_count = 0
+    
+    for record in event.get('Records', []):
+        try:
+            # Parsear el body del mensaje SQS
+            message_body = json.loads(record['body'])
+            video_id = message_body.get('video_id')
+            video_path = message_body.get('video_path')
+            task_id = message_body.get('task_id', 'unknown')
+            
+            if not video_id or not video_path:
+                logger.error(f"Invalid message format: missing video_id or video_path")
+                failed_count += 1
+                continue
+            
+            logger.info(f"Processing video {video_id} (task: {task_id})")
+            
+            # Procesar el video directamente
+            success = process_video(video_id, video_path)
+            
+            if success:
+                processed_count += 1
+                logger.info(f"Successfully processed video {video_id}")
+            else:
+                # Si falla, lanzar excepción para que Lambda no elimine el mensaje
+                # y SQS lo reintente automáticamente
+                failed_count += 1
+                raise Exception(f"Failed to process video {video_id}")
+                
+        except Exception as e:
+            logger.error(f"Error processing record: {str(e)}", exc_info=True)
+            failed_count += 1
+            # Re-lanzar la excepción para que Lambda no elimine el mensaje
+            raise
+    
+    # Si llegamos aquí, todos los mensajes se procesaron exitosamente
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'processed': processed_count,
+            'failed': failed_count,
+            'total': len(event.get('Records', []))
+        })
+    }
+```
+
+#### 4.2 Crear Deployment Package para Worker
+
+**Nota**: El archivo `lambda_worker_handler.py` ya está creado en la raíz del proyecto.
+
+```bash
+# Crear directorio para Lambda Worker
+mkdir -p lambda-worker-package
+cd lambda-worker-package
+
+# Instalar dependencias
+pip install -r ../requirements.txt -t .
+
+# Copiar código de la aplicación
+cp -r ../app .
+cp ../lambda_worker_handler.py .
+
+# Crear ZIP
+zip -r ../lambda-worker-deployment.zip .
+cd ..
+```
+
+**Verificar tamaño**:
+```bash
+du -sh lambda-worker-deployment.zip
+# Si es > 50 MB, considera usar Lambda Layers para dependencias grandes
+```
+
+#### 4.3 Crear Función Lambda para Worker
+
+1. **Lambda Dashboard** → **Functions** → **Create function**
+2. Configuración:
+   - **Function name**: `anb-worker-lambda`
+   - **Runtime**: Python 3.12
+   - **Architecture**: x86_64
+   - **Execution role**: `LabRole` (mismo que API)
+3. Click **Create function**
+
+#### 4.4 Subir Código y Configurar
+
+1. **Code** → **Upload from** → **.zip file**
+2. Sube `lambda-worker-deployment.zip`
+3. **Handler**: `lambda_worker_handler.handler`
+4. **Configuration** → **General configuration** → **Edit**:
+   - **Timeout**: 900 segundos (15 minutos máximo - suficiente para procesar videos)
+   - **Memory**: 3008 MB (máximo para procesamiento de video)
+   - **Ephemeral storage**: 10240 MB (10 GB para videos temporales)
+
+#### 4.5 Configurar Variables de Entorno
+
+Mismas que la API, excepto que no necesita `SQS_QUEUE_URL` (lo recibe del trigger):
+
+```
+DATABASE_URL=postgresql://anb_admin:PASSWORD@RDS_ENDPOINT:5432/anb_db
+POSTGRES_HOST=RDS_ENDPOINT
+POSTGRES_PORT=5432
+POSTGRES_USER=anb_admin
+POSTGRES_PASSWORD=PASSWORD
+POSTGRES_DB=anb_db
+SQS_REGION=us-east-1
+STORAGE_TYPE=cloud
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=anb-rising-stars-videos-east1
+S3_UPLOAD_PREFIX=uploads/
+S3_PROCESSED_PREFIX=processed_videos/
+ENVIRONMENT=production
+DEBUG=False
+```
+
+#### 4.6 Configurar SQS Trigger
+
+1. **Lambda Function** → **Add trigger**
+2. Configuración:
+   - **Source**: SQS
+   - **SQS queue**: `anb-video-processing-queue`
+   - **Batch size**: 1 (procesar un mensaje a la vez)
+   - **Batch window**: 0 segundos
+3. Click **Add**
+
+**Nota**: Lambda procesará automáticamente los mensajes de SQS. No necesitas polling manual.
+
+---
+
+## Opción B: ECS para Capa Web + ECS para Workers (Requiere ECR)
+
+**⚠️ Esta opción requiere permisos para crear ECR Repository. Si no tienes permisos, usa la Opción A (Lambda).**
 
 ### Paso 1: Preparar Imagen Docker y Subir a ECR
 
