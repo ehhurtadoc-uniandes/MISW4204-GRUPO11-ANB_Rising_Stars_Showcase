@@ -476,6 +476,8 @@ docker rm anb-api
 - **[Guía de Despliegue Lambda](docs/Entrega_5/LAMBDA_DEPLOYMENT_GUIDE.md)** - Guía detallada para desplegar la capa web en AWS Lambda
 - **[Arquitectura PaaS](docs/Entrega_5/ARQUITECTURA_PAAS.md)** - Arquitectura del sistema en modelo PaaS y comparación con IaaS
 - **[Plan de Migración IaaS → PaaS](docs/Entrega_5/MIGRATION_PLAN_PAAS.md)** - Plan detallado de migración desde Entrega 4 (IaaS) a Entrega 5 (PaaS)
+- **[Video de Sustentación - Entrega 5]([https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQA6v9ipB7_nQqhKhtSnTbH0ATk_-leyQKNQ-L3UJ4VylF8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=8ksOr3](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQBuSmEZ0fVrRqQYHbwG7kAXAYL9mlDoyjjkmVb1hU4Os28?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=bYH3xU)** - Video de sustentación de la Entrega 5
+
 
 ## Licencia
 
