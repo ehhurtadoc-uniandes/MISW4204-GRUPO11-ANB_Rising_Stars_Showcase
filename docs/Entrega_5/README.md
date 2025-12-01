@@ -19,6 +19,8 @@ Esta entrega consiste en migrar la aplicación de un modelo IaaS (EC2 con Auto S
 2. **[Guía de Despliegue Lambda](LAMBDA_DEPLOYMENT_GUIDE.md)** - Guía detallada para desplegar la capa web en Lambda
 3. **[Arquitectura PaaS](ARQUITECTURA_PAAS.md)** - Arquitectura del sistema en modelo PaaS
 4. **[Plan de Migración IaaS → PaaS](MIGRATION_PLAN_PAAS.md)** - Plan detallado de migración
+5. **[Documento de pruebas](https://github.com/ehhurtadoc-uniandes/MISW4204-GRUPO11-ANB_Rising_Stars_Showcase/blob/main/docs/Entrega_5/Documento%20de%20Pruebas%20Proyecto%20-Entrega%205.pdf)** - Documento de pruebas
+6. **[Video sustentacion entrega 5](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQBuSmEZ0fVrRqQYHbwG7kAXAYL9mlDoyjjkmVb1hU4Os28?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=bYH3xU)** - Video sustentacion entrega 5
 
 ### Configuraciones
 
