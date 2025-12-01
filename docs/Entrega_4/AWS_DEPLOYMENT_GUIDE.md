@@ -157,6 +157,9 @@ aws sqs get-queue-url \
    └─────────┘    └──────────┘
 ```
 
+### Imagen de Arquitectura
+**[Imágen de la Arquitectura](docs/Entrega_4/Arquitectura.pdf)**
+
 ### Componentes
 
 - **Application Load Balancer (ALB)**: Distribuye tráfico entre instancias backend (Actividad 1 - completada)

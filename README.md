@@ -14,6 +14,8 @@ El video de sustentación para la Entrega 1 esta disponible en: [sustentacion/En
 
 El video de sustentación para la Entrega 2 esta disponible en: [Sustentacion entrega_2](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/ER30KqTZtkROkaRrtZp3ICkBs7q8I5HYmNjdg73uokdplA?e=SlC9Lt)
 
+El vídeo de sustentación para la Entrega 4 está disponible en: [Sustentacion entrega_4](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQA6v9ipB7_nQqhKhtSnTbH0ATk_-leyQKNQ-L3UJ4VylF8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=8ksOr3)
+
 ## Enlaces Importantes
 
 - **Documentación Completa**: [docs/Entrega_1/README.md](docs/Entrega_1/README.md)
@@ -461,9 +463,12 @@ docker rm anb-api
 
 ### Entrega 4
 - **[Documento de Arquitectura](docs/Entrega_4/ARQUITECTURA.md)** - Arquitectura completa del sistema con modelo de despliegue y componentes
+- **[Imágen de la Arquitectura](docs/Entrega_4/Arquitectura.pdf)** - Imágen de la arquitectura
+- **[Documento de Pruebas - Entrega 4](docs/Entrega_4/Documento%20de%20Pruebas%20Proyecto%20-%20Entrega%204.pdf)** - Documento completo de pruebas
 - **[Guía de Despliegue en AWS](docs/Entrega_4/AWS_DEPLOYMENT_GUIDE.md)** - Guía paso a paso para desplegar la arquitectura escalable y de alta disponibilidad
 - **[Plan de Migración](docs/Entrega_4/MIGRATION_PLAN.md)** - Plan de migración desde Entrega 3 a Entrega 4
 - **[Guía de Migración SQS](docs/Entrega_4/SQS_MIGRATION_GUIDE.md)** - Detalles técnicos de la migración de Celery/Redis a SQS
+- **[Video de Sustentación - Entrega 4](https://uniandes-my.sharepoint.com/:v:/g/personal/sf_barreram1_uniandes_edu_co/IQA6v9ipB7_nQqhKhtSnTbH0ATk_-leyQKNQ-L3UJ4VylF8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=8ksOr3)** - Video de sustentación de la Entrega 4
 
 ### Entrega 5
 - **[README Entrega 5](docs/Entrega_5/README.md)** - Resumen y documentación de la Entrega 5 (PaaS)
